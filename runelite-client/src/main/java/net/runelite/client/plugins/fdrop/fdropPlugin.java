@@ -122,6 +122,10 @@ public class fdropPlugin extends Plugin
 		{
 			sendChatMessage(config.msg());
 		}
+		if(!config.custom().equals(""))
+		{
+			client.addChatMessage(GAMEMESSAGE, "", config.custom(), null);
+		}
 	}
 
 	public void sendChatMessage(String chatMessage)

@@ -105,4 +105,15 @@ public interface fdropConfig extends Config
 	{
 		return "";
 	}
+
+	@ConfigItem(
+			position = 10,
+			keyName = "custom",
+			name = "Custom Message <col=ff0000></col>",
+			description = "Valuable drop 4"
+	)
+	default String custom()
+	{
+		return "";
+	}
 }

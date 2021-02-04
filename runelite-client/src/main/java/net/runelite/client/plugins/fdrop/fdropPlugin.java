@@ -22,7 +22,7 @@ import static net.runelite.api.ChatMessageType.GAMEMESSAGE;
 
 @Slf4j
 @PluginDescriptor(
-	name = "Drop",
+	name = "[M]Drop",
 	description = "Highlight and notify you of chat messages",
 	tags = {"drop", "messages", "notifications"},
 	enabledByDefault = false

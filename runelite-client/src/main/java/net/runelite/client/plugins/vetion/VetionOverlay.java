@@ -33,7 +33,6 @@ public class VetionOverlay extends Overlay {
         this.client = client;
         this.config = config;
         this.setPosition(OverlayPosition.DYNAMIC);
-        this.determineLayer();
     }
 
     public Dimension render(Graphics2D graphics) {
@@ -59,17 +58,6 @@ public class VetionOverlay extends Overlay {
 
         });
         return null;
-    }
-
-    public void determineLayer() {
-        if (this.config.mirrorMode()) {
-            this.setLayer(OverlayLayer.AFTER_MIRROR);
-        }
-
-        if (!this.config.mirrorMode()) {
-            this.setLayer(OverlayLayer.ABOVE_SCENE);
-        }
-
     }
 
     static {

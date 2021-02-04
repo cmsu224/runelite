@@ -28,7 +28,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 
 @PluginDescriptor(
-        name = "Boss Tick Timers",
+        name = "[O]Boss Tick Timers",
         enabledByDefault = false,
         description = "Tick timers for bosses",
         tags = {"pvm", "bossing"}

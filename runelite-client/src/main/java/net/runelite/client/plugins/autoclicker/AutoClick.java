@@ -3,9 +3,12 @@
 // (powered by FernFlower decompiler)
 //
 
-package net.runelite.client.plugins.externals.autoclicker;
+package net.runelite.client.plugins.autoclicker;
 
 import com.google.inject.Provides;
+
+import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,19 +23,15 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.plugins.PluginType;
-import net.runelite.client.plugins.externals.utils.ExtUtils;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.HotkeyListener;
-import org.pf4j.Extension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Extension
+
 @PluginDescriptor(
-        name = "Auto Clicker",
-        enabledByDefault = false,
-        type = PluginType.UTILITY
+        name = "[O]Auto Clicker",
+        enabledByDefault = false
 )
 public class AutoClick extends Plugin {
     private static final Logger log = LoggerFactory.getLogger(AutoClick.class);
@@ -47,7 +46,6 @@ public class AutoClick extends Plugin {
     @Inject
     private KeyManager keyManager;
     @Inject
-    private ExtUtils extUtils;
     private ExecutorService executorService;
     private Point point;
     private Random random;
@@ -67,7 +65,7 @@ public class AutoClick extends Plugin {
                                 AutoClick.this.run = false;
                             } else {
                                 if (!AutoClick.this.checkHitpoints() && !AutoClick.this.checkInventory()) {
-                                    AutoClick.this.extUtils.click(AutoClick.this.point);
+                                    click(AutoClick.this.point);
 
                                     try {
                                         Thread.sleep(AutoClick.this.randomDelay());
@@ -90,6 +88,39 @@ public class AutoClick extends Plugin {
             }
         }
     };
+
+    public void click(Point p)
+    {
+        assert !client.isClientThread();
+
+        if (client.isStretchedEnabled())
+        {
+            final Dimension stretched = client.getStretchedDimensions();
+            final Dimension real = client.getRealDimensions();
+            final double width = (stretched.width / real.getWidth());
+            final double height = (stretched.height / real.getHeight());
+            final Point point = new Point((int) (p.getX() * width), (int) (p.getY() * height));
+            mouseEvent(501, point);
+            mouseEvent(502, point);
+            mouseEvent(500, point);
+            return;
+        }
+        mouseEvent(501, p);
+        mouseEvent(502, p);
+        mouseEvent(500, p);
+    }
+
+    private void mouseEvent(int id, Point point)
+    {
+        MouseEvent e = new MouseEvent(
+                client.getCanvas(), id,
+                System.currentTimeMillis(),
+                0, point.getX(), point.getY(),
+                1, false, 1
+        );
+
+        client.getCanvas().dispatchEvent(e);
+    }
 
     public AutoClick() {
     }

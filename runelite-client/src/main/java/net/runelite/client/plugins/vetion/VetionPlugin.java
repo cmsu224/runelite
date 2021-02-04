@@ -17,17 +17,13 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.plugins.PluginType;
 import net.runelite.client.ui.overlay.OverlayManager;
-import org.pf4j.Extension;
 
-@Extension
 @PluginDescriptor(
-        name = "Vetion Helper",
+        name = "[O]Vetion Helper",
         enabledByDefault = false,
         description = "Tracks Vet'ion's special attacks",
-        tags = {"bosses", "combat", "pve", "overlay"},
-        type = PluginType.PVM
+        tags = {"bosses", "combat", "pve", "overlay"}
 )
 public class VetionPlugin extends Plugin {
     @Inject
@@ -69,7 +65,6 @@ public class VetionPlugin extends Plugin {
     public void onConfigChanged(ConfigChanged event) {
         if (event.getGroup().equals("vetion")) {
             if (event.getKey().equals("mirrorMode")) {
-                this.overlay.determineLayer();
                 this.overlayManager.remove(this.overlay);
                 this.overlayManager.add(this.overlay);
             }

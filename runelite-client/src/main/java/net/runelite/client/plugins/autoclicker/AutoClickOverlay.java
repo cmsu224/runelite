@@ -3,7 +3,7 @@
 // (powered by FernFlower decompiler)
 //
 
-package net.runelite.client.plugins.externals.autoclicker;
+package net.runelite.client.plugins.autoclicker;
 
 import java.awt.Color;
 import java.awt.Dimension;

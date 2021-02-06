@@ -6,7 +6,6 @@
 package net.runelite.client.plugins.autoclicker;
 
 import com.google.inject.Provides;
-
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.Random;
@@ -28,7 +27,6 @@ import net.runelite.client.util.HotkeyListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 @PluginDescriptor(
         name = "[O]Auto Clicker",
         enabledByDefault = false
@@ -47,6 +45,7 @@ public class AutoClick extends Plugin {
     private KeyManager keyManager;
     @Inject
     private ExecutorService executorService;
+
     private Point point;
     private Random random;
     private boolean run;

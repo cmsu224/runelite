@@ -394,7 +394,7 @@ public class ConfigManager
 
 		parent.mkdirs();
 
-		File tempFile = new File(parent, RuneLite.DEFAULT_CONFIG_FILE.getName() + ".tmp");
+		File tempFile = File.createTempFile("runelite", null, parent);
 
 		try (FileOutputStream out = new FileOutputStream(tempFile))
 		{
@@ -507,6 +507,11 @@ public class ConfigManager
 
 	public void setConfiguration(String groupName, String profile, String key, String value)
 	{
+		if (Strings.isNullOrEmpty(groupName) || Strings.isNullOrEmpty(key))
+		{
+			throw new IllegalArgumentException();
+		}
+
 		assert !key.startsWith(RSPROFILE_GROUP + ".");
 		String wholeKey = getWholeKey(groupName, profile, key);
 		String oldValue = (String) properties.setProperty(wholeKey, value);

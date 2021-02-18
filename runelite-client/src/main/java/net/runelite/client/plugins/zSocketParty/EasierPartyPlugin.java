@@ -26,6 +26,7 @@
 package net.runelite.client.plugins.zSocketParty;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Provides;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.runelite.api.Point;
@@ -39,21 +40,22 @@ import net.runelite.client.chat.ChatColorType;
 import net.runelite.client.chat.ChatMessageBuilder;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.config.Keybind;
+import net.runelite.client.config.ModifierlessKeybind;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.plugins.*;
+import net.runelite.client.plugins.socket.SocketConfig;
 import net.runelite.client.plugins.socket.SocketPlugin;
 import net.runelite.client.plugins.socket.org.json.JSONArray;
 import net.runelite.client.plugins.socket.org.json.JSONObject;
 import net.runelite.client.plugins.socket.packet.SocketBroadcastPacket;
 import net.runelite.client.plugins.socket.packet.SocketReceivePacket;
-import net.runelite.client.plugins.zSocketParty.data.PartyData;
-import net.runelite.client.plugins.zSocketParty.data.PartyPlayer;
-import net.runelite.client.plugins.zSocketParty.data.PartyTilePingData;
-import net.runelite.client.plugins.zSocketParty.data.Prayers;
+import net.runelite.client.plugins.zSocketParty.data.*;
 import net.runelite.client.plugins.zSocketParty.messages.TilePing;
 import net.runelite.client.plugins.zSocketParty.ui.prayer.PrayerSprites;
 import net.runelite.client.ui.ClientToolbar;
@@ -64,6 +66,7 @@ import net.runelite.client.ws.PartyService;
 import net.runelite.client.ws.WSClient;
 
 import javax.inject.Inject;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -75,9 +78,8 @@ import static net.runelite.api.ChatMessageType.GAMEMESSAGE;
 
 @PluginDescriptor(
 		name = "[Maz] Socket-Party",
-		description = "Create a party without having to add people as a friend on Discord.",
-		tags = {"socket", "server", "discord", "connection", "broadcast", "party", "easy"},
-		enabledByDefault = false
+		description = "Create a party without having to use Discord party plugin.",
+		tags = {"socket", "server", "discord", "connection", "broadcast", "party", "easy"}
 )
 @PluginDependency(SocketPlugin.class)
 public class EasierPartyPlugin extends Plugin
@@ -107,7 +109,14 @@ public class EasierPartyPlugin extends Plugin
 	@Inject
 	private PartyPingOverlay partyPingOverlay;
 
-	private UUID partyUUID;
+	@Inject
+	@Getter(AccessLevel.PUBLIC)
+	private EasierPartyConfig config;
+	@Provides
+	EasierPartyConfig provideConfig(ConfigManager configManager)
+	{
+		return configManager.getConfig(EasierPartyConfig.class);
+	}
 
 	@Inject
 	private ClientThread clientThread;
@@ -116,7 +125,9 @@ public class EasierPartyPlugin extends Plugin
 			GAMEMESSAGE
 	);
 
-	private final Color pingColor = new Color((int)(Math.random() * 0x1000000));
+	private Color pingColor;
+	private ModifierlessKeybind pingKey;
+	private Boolean showPanel;
 
 	@Getter(AccessLevel.PACKAGE)
 	private final Map<UUID, PartyData> partyDataMap = Collections.synchronizedMap(new HashMap<>());
@@ -171,22 +182,61 @@ public class EasierPartyPlugin extends Plugin
 	protected void startUp()
 	{
 		overlayManager.add(partyPingOverlay);
-
+		pingColor = config.pingTileColor();
+		pingKey = config.PingKey();
+		showPanel = config.showpartypanel();
 		/////////////////////////////////////////////////////////////////////////////////////////////
-		panel = new PartyPanel(this);
-		//final BufferedImage icon = ImageUtil.getResourceStreamFromClass(ClientUI.class, "icon.png");
+		if(showPanel)
+		{
+			panel = new PartyPanel(this);
+			//final BufferedImage icon = ImageUtil.getResourceStreamFromClass(ClientUI.class, "icon.png");
 
-		final BufferedImage icon = ImageUtil.getResourceStreamFromClass(this.getClass(), "icon.png");
+			final BufferedImage icon = ImageUtil.loadImageResource(this.getClass(), "icon.png");
 
-		navButton = NavigationButton.builder()
-				.tooltip("Party Panel2")
-				.icon(icon)
-				.priority(7)
-				.panel(panel)
-				.build();
+			navButton = NavigationButton.builder()
+					.tooltip("Party Panel2")
+					.icon(icon)
+					.priority(7)
+					.panel(panel)
+					.build();
 
-		clientToolbar.addNavigation(navButton);
-		addedButton = true;
+			clientToolbar.addNavigation(navButton);
+			addedButton = true;
+		}
+	}
+
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		if (event.getGroup().equals("zSocketParty"))
+		{
+			pingColor = config.pingTileColor();
+			pingKey = config.PingKey();
+			showPanel = config.showpartypanel();
+			if(showPanel)
+			{
+				panel = new PartyPanel(this);
+				//final BufferedImage icon = ImageUtil.getResourceStreamFromClass(ClientUI.class, "icon.png");
+
+				final BufferedImage icon = ImageUtil.loadImageResource(this.getClass(), "icon.png");
+
+				navButton = NavigationButton.builder()
+						.tooltip("Party Panel2")
+						.icon(icon)
+						.priority(7)
+						.panel(panel)
+						.build();
+
+				clientToolbar.addNavigation(navButton);
+				addedButton = true;
+			}else
+			{
+				clientToolbar.removeNavigation(navButton);
+				myPlayer = null;
+				addedButton = false;
+				partyMembers.clear();
+			}
+		}
 	}
 
 	@Override
@@ -195,6 +245,7 @@ public class EasierPartyPlugin extends Plugin
 		overlayManager.remove(partyPingOverlay);
 		//////////////////////////////////////////////////////////////////////////////////////////////
 		clientToolbar.removeNavigation(navButton);
+		myPlayer = null;
 		addedButton = false;
 		partyMembers.clear();
 	}
@@ -202,8 +253,11 @@ public class EasierPartyPlugin extends Plugin
 	@Subscribe
 	public void onGameStateChanged(GameStateChanged gameStateChanged)
 	{
-		if (client.getGameState() == GameState.LOGIN_SCREEN)
+		if (client.getGameState() == GameState.LOGGED_IN)
 		{
+			myPlayer = new PartyPlayer(partyService.getLocalMember(), client, itemManager);
+			panel.updatePartyPlayer(myPlayer);
+		}else {
 			partyMembers.clear();
 			myPlayer = null;
 			panel.showBannerView();
@@ -226,10 +280,10 @@ public class EasierPartyPlugin extends Plugin
 			{
 				myPlayer = new PartyPlayer(partyService.getLocalMember(), client, itemManager);
 				// member changed account, send new data to all members
-				return;
+				changed = true;
 			}
 
-			if (myPlayer.getStats() == null)
+			if (myPlayer.getStats() == null || !myPlayer.getStats().equals(new Stats(client)))
 			{
 				myPlayer.updatePlayerInfo(client, itemManager);
 				changed = true;
@@ -241,7 +295,6 @@ public class EasierPartyPlugin extends Plugin
 				if (myPlayer.getStats().getRunEnergy() != energy)
 				{
 					myPlayer.getStats().setRunEnergy(energy);
-					//sendChatMessage("running");
 					changed = true;
 				}
 			}
@@ -292,7 +345,7 @@ public class EasierPartyPlugin extends Plugin
 	@Subscribe
 	private void onMenuOptionClicked(MenuOptionClicked event)
 	{
-		if (!client.isKeyPressed(82) || client.isMenuOpen())
+		if (!client.isKeyPressed(pingKey.getKeyCode()) || client.isMenuOpen())
 		{
 			return;
 		}
@@ -390,11 +443,7 @@ public class EasierPartyPlugin extends Plugin
 				PartyPlayer receivedPlayer = new PartyPlayer(playerInfo);
 				partyMembers.put(receivedPlayer.getUsername(), receivedPlayer);
 
-				//Stats s = myPlayer.getStats();
-				//s.parseJSON(playerInfo.getJSONObject("stats"));
-
-				panel.updatePartyPlayer(receivedPlayer);
-				//panel.refreshUI();
+				SwingUtilities.invokeLater(() -> panel.updatePartyPlayer(receivedPlayer));
 			}
 			else if (payload.has("leave-party"))
 			{
@@ -472,3 +521,4 @@ public class EasierPartyPlugin extends Plugin
 	}
 
 }
+

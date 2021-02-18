@@ -84,8 +84,7 @@ public class Prayers
             PrayerData pData = entry.getValue();
 
             JSONObject praData = pData.toJSON();
-            json.put("prayer", prayer.getVarbit().toString());
-            json.put("prayerdata", praData);
+            json.put(prayer.getVarbit().toString(), praData);
         }
         return json;
     }
@@ -93,17 +92,12 @@ public class Prayers
     public void parseJSON(JSONObject json)
     {
         this.prayerData = new HashMap<>();
-        JSONObject prayData = json.getJSONObject("prayerdata");
-        Iterator<String> keys = prayData.keys();
-
+        Iterator<String> keys = json.keys();
         while(keys.hasNext())
         {
             String key = keys.next();
-
-            PrayerData pd = new PrayerData(prayData);
-            Prayer p = pd.getPrayer();
-
-            this.prayerData.put(pd.getPrayer(), pd);
+            PrayerData pd = new PrayerData(json.getJSONObject(key));
+            this.prayerData.put(pd.getPrayer(),pd);
         }
     }
 }

@@ -20,7 +20,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 
 @PluginDescriptor(
-        name = "[O]Vetion Helper",
+        name = "[Maz] Vetion Helper",
         enabledByDefault = false,
         description = "Tracks Vet'ion's special attacks",
         tags = {"bosses", "combat", "pve", "overlay"}

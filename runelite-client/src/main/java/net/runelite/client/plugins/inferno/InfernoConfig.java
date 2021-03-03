@@ -24,7 +24,7 @@ public interface InfernoConfig extends Config {
             position = 0,
             closedByDefault = true
     )
-    String Prayer = "Prayer";
+    String PrayerSection = "PrayerSection";
 
     @ConfigSection(
             name = "Safespots",

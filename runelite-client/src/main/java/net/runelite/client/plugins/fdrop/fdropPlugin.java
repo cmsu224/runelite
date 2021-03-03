@@ -22,7 +22,7 @@ import static net.runelite.api.ChatMessageType.GAMEMESSAGE;
 
 @Slf4j
 @PluginDescriptor(
-	name = "[M]Drop",
+	name = "[Maz] Message",
 	description = "Highlight and notify you of chat messages",
 	tags = {"drop", "messages", "notifications"},
 	enabledByDefault = false
@@ -87,6 +87,15 @@ public class fdropPlugin extends Plugin
 
 	public void compileMessage()
 	{
+		//g kill
+		if(!config.gPB().equals(""))
+		{
+			client.addChatMessage(GAMEMESSAGE, "", "Corrupted challenge duration: <col=ff0000>" + config.gTot() + "</col>. Personal best: " + config.gPB()+".", null);
+			client.addChatMessage(GAMEMESSAGE, "", "Preparation time: <col=ff0000>" + config.gPrep() + "</col>. Hunllef kill time: " + config.gKill()+".", null);
+			client.addChatMessage(GAMEMESSAGE, "", "Your Corrupted Gauntlet completion count is: <col=ff0000>" + config.gkc() + "</col>.", null);
+			client.addChatMessage(GAMEMESSAGE, "", "Your reward awaits you in the nearby chest.", null);
+		}
+
 		//Kill count message
 		if(!config.Kill().equals(""))
 		{
@@ -96,7 +105,7 @@ public class fdropPlugin extends Plugin
 		//Kill time message
 		if(!config.FightDuration().equals(""))
 		{
-			client.addChatMessage(GAMEMESSAGE, "", "Fight Duration: <col=ff0000>" + config.FightDuration() + " </col>. Personal best: " + config.pb(), null);
+			client.addChatMessage(GAMEMESSAGE, "", "Fight duration: <col=ff0000>" + config.FightDuration() + " </col>. Personal best: " + config.pb(), null);
 		}
 
 		//Drop notification

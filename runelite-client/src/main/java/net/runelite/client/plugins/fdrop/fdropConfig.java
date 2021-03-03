@@ -116,4 +116,59 @@ public interface fdropConfig extends Config
 	{
 		return "";
 	}
+
+	@ConfigItem(
+			position = 11,
+			keyName = "gPrep",
+			name = "gPrep",
+			description = "prep time"
+	)
+	default String gPrep()
+	{
+		return "7:30";
+	}
+
+	@ConfigItem(
+			position = 12,
+			keyName = "gKill",
+			name = "gKill",
+			description = "Kill time"
+	)
+	default String gKill()
+	{
+		return "19:32";
+	}
+
+	@ConfigItem(
+			position = 12,
+			keyName = "gPB",
+			name = "gPB",
+			description = "g PB"
+	)
+	default String gPB()
+	{
+		return "7:11";
+	}
+
+	@ConfigItem(
+			position = 12,
+			keyName = "gTot",
+			name = "gTot",
+			description = "gTot"
+	)
+	default String gTot()
+	{
+		return "7:11";
+	}
+
+	@ConfigItem(
+			position = 13,
+			keyName = "gkc",
+			name = "gkc",
+			description = "gkc"
+	)
+	default String gkc()
+	{
+		return "72";
+	}
 }

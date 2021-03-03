@@ -191,7 +191,7 @@ public class EasierPartyPlugin extends Plugin
 			panel = new PartyPanel(this);
 			//final BufferedImage icon = ImageUtil.getResourceStreamFromClass(ClientUI.class, "icon.png");
 
-			final BufferedImage icon = ImageUtil.loadImageResource(this.getClass(), "icon.png");
+			final BufferedImage icon = ImageUtil.getResourceStreamFromClass(this.getClass(), "icon.png");
 
 			navButton = NavigationButton.builder()
 					.tooltip("Party Panel2")
@@ -218,7 +218,7 @@ public class EasierPartyPlugin extends Plugin
 				panel = new PartyPanel(this);
 				//final BufferedImage icon = ImageUtil.getResourceStreamFromClass(ClientUI.class, "icon.png");
 
-				final BufferedImage icon = ImageUtil.loadImageResource(this.getClass(), "icon.png");
+				final BufferedImage icon = ImageUtil.getResourceStreamFromClass(this.getClass(), "icon.png");
 
 				navButton = NavigationButton.builder()
 						.tooltip("Party Panel2")
@@ -386,13 +386,14 @@ public class EasierPartyPlugin extends Plugin
 		jsonwp.put("y", wp.getY());
 		jsonwp.put("plane", wp.getPlane());
 		jsonwp.put("player-name", client.getLocalPlayer().getName());
+		jsonwp.put("color", pingColor.getRGB());
 		data.put(jsonwp);
 
 		JSONObject payload = new JSONObject();
 		payload.put("tile-ping", data);
 		//sendChatMessage("Attempting to send world point: " +  wp.getX() + "/"+wp.getY());
 		eventBus.post(new SocketBroadcastPacket(payload));
-		sendPlayerData(myPlayer);
+		//sendPlayerData(myPlayer);
 	}
 
 	@Subscribe
@@ -419,14 +420,15 @@ public class EasierPartyPlugin extends Plugin
 				int x = jsonwp.getInt("x");
 				int y = jsonwp.getInt("y");
 				int plane = jsonwp.getInt("plane");
+
+				Color c = this.pingColor;
+				if(jsonwp.has("color")) {
+					c = new Color(jsonwp.getInt("color"));
+				}
 				//sendChatMessage("Attempting to draw world point: " +  x + "/"+y);
 				WorldPoint wp = new WorldPoint(x, y, plane);
 				final TilePing tilePing = new TilePing(wp);
-
-
-				//final Color color = Color.RED;
-				final Color color = this.pingColor;
-				pendingTilePings.add(new PartyTilePingData(wp, color));
+				pendingTilePings.add(new PartyTilePingData(wp, c));
 
 				if (wp.getPlane() != client.getPlane() || !wp.isInScene(client, wp.getX(), wp.getY()))
 				{
@@ -438,12 +440,15 @@ public class EasierPartyPlugin extends Plugin
 			}
 			else if (payload.has("player-info"))
 			{
-				JSONObject playerInfo = payload.getJSONObject("player-info");
+				if(config.showpartypanel())
+				{
+					JSONObject playerInfo = payload.getJSONObject("player-info");
+					PartyPlayer receivedPlayer = new PartyPlayer(playerInfo);
+					if(myPlayer.getUsername().equals(receivedPlayer.getUsername())){return;}
+					partyMembers.put(receivedPlayer.getUsername(), receivedPlayer);
 
-				PartyPlayer receivedPlayer = new PartyPlayer(playerInfo);
-				partyMembers.put(receivedPlayer.getUsername(), receivedPlayer);
-
-				SwingUtilities.invokeLater(() -> panel.updatePartyPlayer(receivedPlayer));
+					SwingUtilities.invokeLater(() -> panel.updatePartyPlayer(receivedPlayer));
+				}
 			}
 			else if (payload.has("leave-party"))
 			{
@@ -521,4 +526,3 @@ public class EasierPartyPlugin extends Plugin
 	}
 
 }
-

@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @PluginDescriptor(
-        name = "[O]Auto Clicker",
+        name = "[Maz] Auto Clicker",
         enabledByDefault = false
 )
 public class AutoClick extends Plugin {

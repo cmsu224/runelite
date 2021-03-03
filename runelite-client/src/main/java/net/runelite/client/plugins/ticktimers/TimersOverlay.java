@@ -1,8 +1,27 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
+/*
+ * Copyright (c) 2019, Ganom <https://github.com/Ganom>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 package net.runelite.client.plugins.ticktimers;
 
 import java.awt.Color;
@@ -10,19 +29,16 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Map.Entry;
 
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetInfo;
-import net.runelite.client.plugins.ticktimers.NPCContainer.AttackStyle;
-import net.runelite.client.plugins.ticktimers.NPCContainer.BossMonsters;
+import static net.runelite.client.plugins.ticktimers.NPCContainer.BossMonsters.GENERAL_GRAARDOR;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
@@ -36,95 +52,99 @@ import java.awt.Shape;
 import java.awt.Stroke;
 
 @Singleton
-public class TimersOverlay extends Overlay {
+public class TimersOverlay extends Overlay
+{
     private static final int TICK_PIXEL_SIZE = 60;
     private static final int BOX_WIDTH = 10;
     private static final int BOX_HEIGHT = 5;
+
     private final TickTimersPlugin plugin;
     private final TickTimersConfig config;
     private final Client client;
 
     @Inject
-    TimersOverlay(TickTimersPlugin plugin, TickTimersConfig config, Client client) {
+    TimersOverlay(final TickTimersPlugin plugin, final TickTimersConfig config, final Client client)
+    {
         this.plugin = plugin;
         this.config = config;
         this.client = client;
-        this.setPosition(OverlayPosition.DYNAMIC);
-        this.setPriority(OverlayPriority.HIGHEST);
+
+        setPosition(OverlayPosition.DYNAMIC);
+        setPriority(OverlayPriority.HIGHEST);
+        determineLayer();
     }
 
-    public Dimension render(Graphics2D graphics) {
-        TreeMap<Integer, TreeMap<Integer, Prayer>> tickAttackMap = new TreeMap();
-        Iterator var3 = this.plugin.getNpcContainers().iterator();
+    @Override
+    public Dimension render(Graphics2D graphics)
+    {
+        // Maps each tick to a set of attacks and their priorities
+        TreeMap<Integer, TreeMap<Integer, Prayer>> tickAttackMap = new TreeMap<>();
 
-        while(true) {
-            NPCContainer npc;
-            int ticksLeft;
-            AttackStyle attackStyle;
-            do {
-                do {
-                    do {
-                        if (!var3.hasNext()) {
-                            if (!tickAttackMap.isEmpty()) {
-                                var3 = tickAttackMap.entrySet().iterator();
-
-                                while(var3.hasNext()) {
-                                    Entry<Integer, TreeMap<Integer, Prayer>> tickEntry = (Entry)var3.next();
-                                    Entry<Integer, Prayer> attackEntry = ((TreeMap)tickEntry.getValue()).firstEntry();
-                                    Prayer prayer = (Prayer)attackEntry.getValue();
-                                    if (prayer != null) {
-                                        this.renderDescendingBoxes(graphics, prayer, (Integer)tickEntry.getKey());
-                                    }
-                                }
-                            }
-
-                            return null;
-                        }
-
-                        npc = (NPCContainer)var3.next();
-                    } while(npc.getNpc() == null);
-
-                    ticksLeft = npc.getTicksUntilAttack();
-                    List<WorldPoint> hitSquares = getHitSquares(npc.getNpc().getWorldLocation(), npc.getNpcSize(), 1, false);
-                    attackStyle = npc.getAttackStyle();
-                    if (this.config.showHitSquares() && attackStyle.getName().equals("Melee")) {
-                        Iterator var8 = hitSquares.iterator();
-
-                        while(var8.hasNext()) {
-                            WorldPoint p = (WorldPoint)var8.next();
-                            drawTiles(graphics, this.client, p, this.client.getLocalPlayer().getWorldLocation(), attackStyle.getColor(), 0, 0, 50);
-                        }
-                    }
-                } while(ticksLeft <= 0);
-            } while(this.config.ignoreNonAttacking() && npc.getNpcInteracting() != this.client.getLocalPlayer() && npc.getMonsterType() != BossMonsters.GENERAL_GRAARDOR);
-
-            if (npc.getMonsterType() == BossMonsters.GENERAL_GRAARDOR && npc.getNpcInteracting() != this.client.getLocalPlayer()) {
-                attackStyle = AttackStyle.RANGE;
+        for (NPCContainer npc : plugin.getNpcContainers())
+        {
+            if (npc.getNpc() == null)
+            {
+                continue;
             }
 
-            String ticksLeftStr = String.valueOf(ticksLeft);
-            int font = this.config.fontStyle().getFont();
-            boolean shadows = this.config.shadows();
-            Color color = ticksLeft <= 1 ? Color.WHITE : attackStyle.getColor();
-            if (!this.config.changeTickColor()) {
-                color = attackStyle.getColor();
-            }
+            int ticksLeft = npc.getTicksUntilAttack();
+            final List<WorldPoint> hitSquares = getHitSquares(npc.getNpc().getWorldLocation(), npc.getNpcSize(), 1, false);
+            NPCContainer.AttackStyle attackStyle = npc.getAttackStyle();
 
-            Point canvasPoint = npc.getNpc().getCanvasTextLocation(graphics, ticksLeftStr, 0);
-            renderTextLocation(graphics, ticksLeftStr, this.config.textSize(), font, color, canvasPoint, shadows, 0);
-            if (this.config.showPrayerWidgetHelper() && attackStyle.getPrayer() != null) {
-                Rectangle bounds = renderPrayerOverlay(graphics, this.client, attackStyle.getPrayer(), color);
-                if (bounds != null) {
-                    this.renderTextLocation(graphics, ticksLeftStr, 16, this.config.fontStyle().getFont(), color, this.centerPoint(bounds), shadows);
+            if (config.showHitSquares() && attackStyle.getName().equals("Melee"))
+            {
+                for (WorldPoint p : hitSquares)
+                {
+                    drawTiles(graphics, client, p, client.getLocalPlayer().getWorldLocation(), attackStyle.getColor(), 0, 0, 50);
                 }
             }
 
-            if (this.config.guitarHeroMode()) {
-                TreeMap<Integer, Prayer> attacks = (TreeMap)tickAttackMap.computeIfAbsent(ticksLeft, (k) -> {
-                    return new TreeMap();
-                });
+            if (ticksLeft <= 0)
+            {
+                continue;
+            }
+
+            if (config.ignoreNonAttacking() && npc.getNpcInteracting() != client.getLocalPlayer() && npc.getMonsterType() != GENERAL_GRAARDOR)
+            {
+                continue;
+            }
+
+            // If you are not tank at bandos, prayer range instead of melee on graardor attack
+            if (npc.getMonsterType() == GENERAL_GRAARDOR && npc.getNpcInteracting() != client.getLocalPlayer())
+            {
+                attackStyle = NPCContainer.AttackStyle.RANGE;
+            }
+
+            final String ticksLeftStr = String.valueOf(ticksLeft);
+            final int font = config.fontStyle().getFont();
+            final boolean shadows = config.shadows();
+            Color color = (ticksLeft <= 1 ? Color.WHITE : attackStyle.getColor());
+
+            if (!config.changeTickColor())
+            {
+                color = attackStyle.getColor();
+            }
+
+            final Point canvasPoint = npc.getNpc().getCanvasTextLocation(graphics, ticksLeftStr, 0);
+            renderTextLocation(graphics, ticksLeftStr, this.config.textSize(), font, color, canvasPoint, shadows, 0);
+
+            if (config.showPrayerWidgetHelper() && attackStyle.getPrayer() != null)
+            {
+                Rectangle bounds = renderPrayerOverlay(graphics, client, attackStyle.getPrayer(), color);
+
+                if (bounds != null)
+                {
+                    renderTextLocation(graphics, ticksLeftStr, 16, config.fontStyle().getFont(), color, centerPoint(bounds), shadows, 0);
+                }
+            }
+
+            if (config.guitarHeroMode())
+            {
+                TreeMap<Integer, Prayer> attacks = tickAttackMap.computeIfAbsent(ticksLeft, (k) -> new TreeMap<>());
+
                 int priority = 999;
-                switch(npc.getMonsterType()) {
+                switch (npc.getMonsterType())
+                {
                     case SERGEANT_STRONGSTACK:
                         priority = 3;
                         break;
@@ -136,11 +156,88 @@ public class TimersOverlay extends Overlay {
                         break;
                     case GENERAL_GRAARDOR:
                         priority = 0;
+                        break;
+                    default:
+                        break;
                 }
 
-                attacks.putIfAbsent(Integer.valueOf(priority), attackStyle.getPrayer());
+                attacks.putIfAbsent(priority, attackStyle.getPrayer());
             }
         }
+
+        if (!tickAttackMap.isEmpty())
+        {
+            for (Entry<Integer, TreeMap<Integer, Prayer>> tickEntry: tickAttackMap.entrySet())
+            {
+                Entry<Integer, Prayer> attackEntry = ((TreeMap)tickEntry.getValue()).firstEntry();
+                Prayer prayer = attackEntry.getValue();
+                if (prayer != null)
+                {
+                    renderDescendingBoxes(graphics, prayer, tickEntry.getKey());
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private void renderDescendingBoxes(Graphics2D graphics, Prayer prayer, int tick)
+    {
+        final Color color = tick == 1 ? Color.RED : Color.ORANGE;
+        final Widget prayerWidget = getWidget2(prayer);
+
+        int baseX = (int) prayerWidget.getBounds().getX();
+        baseX += prayerWidget.getBounds().getWidth() / 2;
+        baseX -= BOX_WIDTH / 2;
+
+        int baseY = (int) prayerWidget.getBounds().getY() - tick * TICK_PIXEL_SIZE - BOX_HEIGHT;
+        baseY += TICK_PIXEL_SIZE - ((plugin.getLastTickTime() + 600 - System.currentTimeMillis()) / 600.0 * TICK_PIXEL_SIZE);
+
+        final Rectangle boxRectangle = new Rectangle(BOX_WIDTH, BOX_HEIGHT);
+        boxRectangle.translate(baseX, baseY);
+
+        renderFilledPolygon(graphics, boxRectangle, color);
+    }
+
+    public static void renderTextLocation(Graphics2D graphics, String txtString, int fontSize, int fontStyle, Color fontColor, Point canvasPoint, boolean shadows, int yOffset)
+    {
+        graphics.setFont(new Font("Arial", fontStyle, fontSize));
+        if (canvasPoint != null)
+        {
+            final Point canvasCenterPoint = new Point(
+                    canvasPoint.getX(),
+                    canvasPoint.getY() + yOffset);
+            final Point canvasCenterPoint_shadow = new Point(
+                    canvasPoint.getX() + 1,
+                    canvasPoint.getY() + 1 + yOffset);
+            if (shadows)
+            {
+                OverlayUtil.renderTextLocation(graphics, canvasCenterPoint_shadow, txtString, Color.BLACK);
+            }
+            OverlayUtil.renderTextLocation(graphics, canvasCenterPoint, txtString, fontColor);
+        }
+    }
+
+    private Point centerPoint(Rectangle rect)
+    {
+        int x = (int) (rect.getX() + rect.getWidth() / 2);
+        int y = (int) (rect.getY() + rect.getHeight() / 2);
+        return new Point(x, y);
+    }
+
+    public void determineLayer()
+    {
+        setLayer(OverlayLayer.ALWAYS_ON_TOP);
+    }
+
+    public static void renderFilledPolygon(Graphics2D graphics, Shape poly, Color color)
+    {
+        graphics.setColor(color);
+        final Stroke originalStroke = graphics.getStroke();
+        graphics.setStroke(new BasicStroke(2));
+        graphics.draw(poly);
+        graphics.fill(poly);
+        graphics.setStroke(originalStroke);
     }
 
     public static List<WorldPoint> getHitSquares(WorldPoint npcLoc, int npcSize, int thickness, boolean includeUnder)
@@ -183,70 +280,6 @@ public class TimersOverlay extends Overlay {
         graphics.fill(poly);
     }
 
-    private void renderDescendingBoxes(Graphics2D graphics, Prayer prayer, int tick) {
-        Color color = tick == 1 ? Color.RED : Color.ORANGE;
-        Widget prayerWidget = getWidget2(prayer);
-        int baseX = (int)prayerWidget.getBounds().getX();
-        baseX = (int)((double)baseX + prayerWidget.getBounds().getWidth() / 2.0D);
-        baseX -= 5;
-        int baseY = (int)prayerWidget.getBounds().getY() - tick * 60 - 5;
-        baseY = (int)((double)baseY + (60.0D - (double)(this.plugin.getLastTickTime() + 600L - System.currentTimeMillis()) / 600.0D * 60.0D));
-        Rectangle boxRectangle = new Rectangle(10, 5);
-        boxRectangle.translate(baseX, baseY);
-        renderFilledPolygon(graphics, boxRectangle, color);
-    }
-
-    public static void renderFilledPolygon(Graphics2D graphics, Shape poly, Color color)
-    {
-        graphics.setColor(color);
-        final Stroke originalStroke = graphics.getStroke();
-        graphics.setStroke(new BasicStroke(2));
-        graphics.draw(poly);
-        graphics.fill(poly);
-        graphics.setStroke(originalStroke);
-    }
-
-    private void renderTextLocation(Graphics2D graphics, String txtString, int fontSize, int fontStyle, Color fontColor, Point canvasPoint, boolean shadows) {
-        graphics.setFont(new Font("Arial", fontStyle, fontSize));
-        if (canvasPoint != null) {
-            Point canvasCenterPoint = new Point(canvasPoint.getX() - 3, canvasPoint.getY() + 6);
-            Point canvasCenterPoint_shadow = new Point(canvasPoint.getX() - 2, canvasPoint.getY() + 7);
-            if (shadows) {
-                OverlayUtil.renderTextLocation(graphics, canvasCenterPoint_shadow, txtString, Color.BLACK);
-            }
-
-            OverlayUtil.renderTextLocation(graphics, canvasCenterPoint, txtString, fontColor);
-        }
-
-    }
-
-    public static void renderTextLocation(Graphics2D graphics, String txtString, int fontSize, int fontStyle, Color fontColor, Point canvasPoint, boolean shadows, int yOffset)
-    {
-        graphics.setFont(new Font("Arial", fontStyle, fontSize));
-        if (canvasPoint != null)
-        {
-            final Point canvasCenterPoint = new Point(
-                    canvasPoint.getX(),
-                    canvasPoint.getY() + yOffset);
-            final Point canvasCenterPoint_shadow = new Point(
-                    canvasPoint.getX() + 1,
-                    canvasPoint.getY() + 1 + yOffset);
-            if (shadows)
-            {
-                OverlayUtil.renderTextLocation(graphics, canvasCenterPoint_shadow, txtString, Color.BLACK);
-            }
-            OverlayUtil.renderTextLocation(graphics, canvasCenterPoint, txtString, fontColor);
-        }
-    }
-
-    private static Polygon rectangleToPolygon(Rectangle rect)
-    {
-        int[] xpoints = {rect.x, rect.x + rect.width, rect.x + rect.width, rect.x};
-        int[] ypoints = {rect.y, rect.y, rect.y + rect.height, rect.y + rect.height};
-
-        return new Polygon(xpoints, ypoints, 4);
-    }
-
     public Rectangle renderPrayerOverlay(Graphics2D graphics, Client client, Prayer prayer, Color color)
     {
         Widget widget = getWidget2(prayer);
@@ -275,9 +308,12 @@ public class TimersOverlay extends Overlay {
         return test;
     }
 
-    private Point centerPoint(Rectangle rect) {
-        int x = (int)(rect.getX() + rect.getWidth() / 2.0D);
-        int y = (int)(rect.getY() + rect.getHeight() / 2.0D);
-        return new Point(x, y);
+    private static Polygon rectangleToPolygon(Rectangle rect)
+    {
+        int[] xpoints = {rect.x, rect.x + rect.width, rect.x + rect.width, rect.x};
+        int[] ypoints = {rect.y, rect.y, rect.y + rect.height, rect.y + rect.height};
+
+        return new Polygon(xpoints, ypoints, 4);
     }
+
 }

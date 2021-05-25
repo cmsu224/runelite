@@ -135,6 +135,10 @@ class XpInfoBox extends JPanel
 		final JMenuItem resetOthers = new JMenuItem("Reset others");
 		resetOthers.addActionListener(e -> xpTrackerPlugin.resetOtherSkillState(skill));
 
+		// Create reset per hour menu
+		final JMenuItem resetPerHour = new JMenuItem("Reset/hr");
+		resetPerHour.addActionListener(e -> xpTrackerPlugin.resetSkillPerHourState(skill));
+
 		// Create reset others menu
 		pauseSkill.addActionListener(e -> xpTrackerPlugin.pauseSkill(skill, !paused));
 
@@ -144,6 +148,7 @@ class XpInfoBox extends JPanel
 		popupMenu.add(openXpTracker);
 		popupMenu.add(reset);
 		popupMenu.add(resetOthers);
+		popupMenu.add(resetPerHour);
 		popupMenu.add(pauseSkill);
 		popupMenu.add(canvasItem);
 		popupMenu.addPopupMenuListener(new PopupMenuListener()
@@ -299,14 +304,11 @@ class XpInfoBox extends JPanel
 				tooltipLabel == XpProgressBarLabel.PERCENTAGE ? "of goal" : "till goal lvl"));
 
 			progressBar.setDimmed(skillPaused);
-
-			progressBar.repaint();
 		}
 		else if (!paused && skillPaused)
 		{
 			// React to the skill state now being paused
 			progressBar.setDimmed(true);
-			progressBar.repaint();
 			paused = true;
 			pauseSkill.setText("Unpause");
 		}
@@ -314,7 +316,6 @@ class XpInfoBox extends JPanel
 		{
 			// React to the skill being unpaused (without update)
 			progressBar.setDimmed(false);
-			progressBar.repaint();
 			paused = false;
 			pauseSkill.setText("Pause");
 		}

@@ -1,8 +1,8 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
+/*
+ * Copyright (c) 2019-2020, ganom <https://github.com/Ganom>
+ * All rights reserved.
+ * Licensed under GPL3, see LICENSE for the full scope.
+ */
 package net.runelite.client.plugins.autoclicker;
 
 import java.awt.Color;
@@ -15,7 +15,8 @@ import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
 
-class AutoClickOverlay extends Overlay {
+class AutoClickOverlay extends Overlay
+{
     private static final Color FLASH_COLOR = new Color(255, 0, 0, 70);
     private final Client client;
     private final AutoClick plugin;
@@ -23,27 +24,32 @@ class AutoClickOverlay extends Overlay {
     private int timeout;
 
     @Inject
-    AutoClickOverlay(Client client, AutoClick plugin, AutoClickConfig config) {
-        this.setPosition(OverlayPosition.DYNAMIC);
-        this.setLayer(OverlayLayer.ALWAYS_ON_TOP);
+    AutoClickOverlay(Client client, AutoClick plugin, AutoClickConfig config)
+    {
+        setPosition(OverlayPosition.DYNAMIC);
+        setLayer(OverlayLayer.ALWAYS_ON_TOP);
         this.client = client;
         this.plugin = plugin;
         this.config = config;
     }
 
-    public Dimension render(Graphics2D graphics) {
-        if (this.plugin.isFlash() && this.config.flash()) {
-            Color flash = graphics.getColor();
+    @Override
+    public Dimension render(Graphics2D graphics)
+    {
+        if (plugin.isFlash() && config.flash())
+        {
+            final Color flash = graphics.getColor();
             graphics.setColor(FLASH_COLOR);
-            graphics.fill(new Rectangle(this.client.getCanvas().getSize()));
+            graphics.fill(new Rectangle(client.getCanvas().getSize()));
             graphics.setColor(flash);
-            ++this.timeout;
-            if (this.timeout >= 50) {
-                this.timeout = 0;
-                this.plugin.setFlash(false);
+            timeout++;
+            if (timeout >= 50)
+            {
+                timeout = 0;
+                plugin.setFlash(false);
             }
         }
-
         return null;
     }
+
 }

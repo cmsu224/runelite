@@ -1,17 +1,14 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package net.runelite.client.plugins.autoclicker;
 
 import com.google.inject.Provides;
-import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.Point;
@@ -22,157 +19,163 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.plugins.autoclicker.ExtUtils;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.HotkeyListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @PluginDescriptor(
-        name = "[Maz] Auto Clicker",
+        name = "Auto Clicker",
         enabledByDefault = false
 )
-public class AutoClick extends Plugin {
-    private static final Logger log = LoggerFactory.getLogger(AutoClick.class);
+@Slf4j
+public class AutoClick extends Plugin
+{
     @Inject
     private Client client;
+
     @Inject
     private AutoClickConfig config;
+
     @Inject
     private AutoClickOverlay overlay;
+
     @Inject
     private OverlayManager overlayManager;
+
     @Inject
     private KeyManager keyManager;
-    @Inject
-    private ExecutorService executorService;
 
+    @Inject
+    private ExtUtils extUtils;
+
+    private ExecutorService executorService;
     private Point point;
     private Random random;
     private boolean run;
+
+    @Getter(AccessLevel.PACKAGE)
+    @Setter(AccessLevel.PACKAGE)
     private boolean flash;
-    private HotkeyListener hotkeyListener = new HotkeyListener(() -> {
-        return this.config.toggle();
-    }) {
-        public void hotkeyPressed() {
-            AutoClick.this.run = !AutoClick.this.run;
-            if (AutoClick.this.run) {
-                AutoClick.this.point = AutoClick.this.client.getMouseCanvasPosition();
-                AutoClick.this.executorService.submit(() -> {
-                    while(true) {
-                        if (AutoClick.this.run) {
-                            if (AutoClick.this.client.getGameState() != GameState.LOGGED_IN) {
-                                AutoClick.this.run = false;
-                            } else {
-                                if (!AutoClick.this.checkHitpoints() && !AutoClick.this.checkInventory()) {
-                                    click(AutoClick.this.point);
 
-                                    try {
-                                        Thread.sleep(AutoClick.this.randomDelay());
-                                    } catch (InterruptedException var2) {
-                                        var2.printStackTrace();
-                                    }
-                                    continue;
-                                }
+    @Provides
+    AutoClickConfig getConfig(ConfigManager configManager)
+    {
+        return configManager.getConfig(AutoClickConfig.class);
+    }
 
-                                AutoClick.this.run = false;
-                                if (AutoClick.this.config.flash()) {
-                                    AutoClick.this.setFlash(true);
-                                }
-                            }
-                        }
+    @Override
+    protected void startUp()
+    {
+        overlayManager.add(overlay);
+        keyManager.registerKeyListener(hotkeyListener);
+        executorService = Executors.newSingleThreadExecutor();
+        random = new Random();
+    }
 
-                        return;
-                    }
-                });
+    @Override
+    protected void shutDown()
+    {
+        overlayManager.remove(overlay);
+        keyManager.unregisterKeyListener(hotkeyListener);
+        executorService.shutdown();
+        random = null;
+    }
+
+    private final HotkeyListener hotkeyListener = new HotkeyListener(() -> config.toggle())
+    {
+        @Override
+        public void hotkeyPressed()
+        {
+            run = !run;
+
+            if (!run)
+            {
+                return;
             }
+
+            point = client.getMouseCanvasPosition();
+
+            executorService.submit(() ->
+            {
+                while (run)
+                {
+                    if (client.getGameState() != GameState.LOGGED_IN)
+                    {
+                        run = false;
+                        break;
+                    }
+
+                    if (checkHitpoints() || checkInventory())
+                    {
+                        run = false;
+                        if (config.flash())
+                        {
+                            setFlash(true);
+                        }
+                        break;
+                    }
+
+                    extUtils.click(point);
+
+                    try
+                    {
+                        Thread.sleep(randomDelay());
+                    }
+                    catch (InterruptedException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
     };
 
-    public void click(Point p)
-    {
-        assert !client.isClientThread();
 
-        if (client.isStretchedEnabled())
+    /**
+     * Generate a gaussian random (average at 0.0, std dev of 1.0)
+     * take the absolute value of it (if we don't, every negative value will be clamped at the minimum value)
+     * get the log base e of it to make it shifted towards the right side
+     * invert it to shift the distribution to the other end
+     * clamp it to min max, any values outside of range are set to min or max
+     */
+    private long randomDelay()
+    {
+        if (config.weightedDistribution())
         {
-            final Dimension stretched = client.getStretchedDimensions();
-            final Dimension real = client.getRealDimensions();
-            final double width = (stretched.width / real.getWidth());
-            final double height = (stretched.height / real.getHeight());
-            final Point point = new Point((int) (p.getX() * width), (int) (p.getY() * height));
-            mouseEvent(501, point);
-            mouseEvent(502, point);
-            mouseEvent(500, point);
-            return;
+            return (long) clamp(
+                    (-Math.log(Math.abs(random.nextGaussian()))) * config.deviation() + config.target()
+            );
         }
-        mouseEvent(501, p);
-        mouseEvent(502, p);
-        mouseEvent(500, p);
+        else
+        {
+            /* generate a normal even distribution random */
+            return (long) clamp(
+                    Math.round(random.nextGaussian() * config.deviation() + config.target())
+            );
+        }
     }
 
-    private void mouseEvent(int id, Point point)
+    private double clamp(double val)
     {
-        MouseEvent e = new MouseEvent(
-                client.getCanvas(), id,
-                System.currentTimeMillis(),
-                0, point.getX(), point.getY(),
-                1, false, 1
-        );
-
-        client.getCanvas().dispatchEvent(e);
+        return Math.max(config.min(), Math.min(config.max(), val));
     }
 
-    public AutoClick() {
-    }
-
-    @Provides
-    AutoClickConfig getConfig(ConfigManager configManager) {
-        return (AutoClickConfig)configManager.getConfig(AutoClickConfig.class);
-    }
-
-    protected void startUp() {
-        this.overlayManager.add(this.overlay);
-        this.keyManager.registerKeyListener(this.hotkeyListener);
-        this.executorService = Executors.newSingleThreadExecutor();
-        this.random = new Random();
-    }
-
-    protected void shutDown() {
-        this.overlayManager.remove(this.overlay);
-        this.keyManager.unregisterKeyListener(this.hotkeyListener);
-        this.executorService.shutdown();
-        this.random = null;
-    }
-
-    private long randomDelay() {
-        return this.config.weightedDistribution() ? (long)this.clamp(-Math.log(Math.abs(this.random.nextGaussian())) * (double)this.config.deviation() + (double)this.config.target()) : (long)this.clamp((double)Math.round(this.random.nextGaussian() * (double)this.config.deviation() + (double)this.config.target()));
-    }
-
-    private double clamp(double val) {
-        return Math.max((double)this.config.min(), Math.min((double)this.config.max(), val));
-    }
-
-    private boolean checkHitpoints() {
-        if (!this.config.autoDisableHp()) {
+    private boolean checkHitpoints()
+    {
+        if (!config.autoDisableHp())
+        {
             return false;
-        } else {
-            return this.client.getBoostedSkillLevel(Skill.HITPOINTS) <= this.config.hpThreshold();
         }
+        return client.getBoostedSkillLevel(Skill.HITPOINTS) <= config.hpThreshold();
     }
 
-    private boolean checkInventory() {
-        if (!this.config.autoDisableInv()) {
+    private boolean checkInventory()
+    {
+        if (!config.autoDisableInv())
+        {
             return false;
-        } else {
-            Widget inventoryWidget = this.client.getWidget(WidgetInfo.INVENTORY);
-            return inventoryWidget.getWidgetItems().size() == 28;
         }
-    }
-
-    boolean isFlash() {
-        return this.flash;
-    }
-
-    void setFlash(boolean flash) {
-        this.flash = flash;
+        final Widget inventoryWidget = client.getWidget(WidgetInfo.INVENTORY);
+        return inventoryWidget.getWidgetItems().size() == 28;
     }
 }

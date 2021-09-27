@@ -210,4 +210,44 @@ public interface NpcIndicatorsConfig extends Config
 	{
 		return false;
 	}
+
+	@ConfigItem(
+			position = 14,
+			keyName = "drawBehind",
+			name = "Draw Behind NPC",
+			description = "Draws the tile behind the NPC")
+	default boolean drawBehindNPC()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			position = 14,
+			keyName = "drawBehindPlayer",
+			name = "Draw Behind Player",
+			description = "Draws the tile behind the Player")
+	default boolean drawBehindPlayer()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			position = 15,
+			keyName = "drawBehindAllNPCs",
+			name = "Draw Behind Player",
+			description = "Draws the tile behind all other Npcs")
+	default boolean drawBehindAllNPCs()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			position = 16,
+			keyName = "drawBehindAllPlayers",
+			name = "Draw Behind Player",
+			description = "Draws the tile behind all other players")
+	default boolean drawBehindAllPlayers()
+	{
+		return false;
+	}
 }

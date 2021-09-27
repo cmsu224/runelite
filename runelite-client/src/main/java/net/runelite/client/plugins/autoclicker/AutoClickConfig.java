@@ -1,20 +1,26 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
+/*
+ * Copyright (c) 2019-2020, ganom <https://github.com/Ganom>
+ * All rights reserved.
+ * Licensed under GPL3, see LICENSE for the full scope.
+ */
 package net.runelite.client.plugins.autoclicker;
 
-import net.runelite.client.config.*;
+import net.runelite.client.config.Config;
+import net.runelite.client.config.ConfigGroup;
+import net.runelite.client.config.ConfigItem;
+import net.runelite.client.config.ConfigSection;
+import net.runelite.client.config.Keybind;
+import net.runelite.client.config.Range;
 
 @ConfigGroup("autoClickerConfig")
-public interface AutoClickConfig extends Config {
+public interface AutoClickConfig extends Config
+{
     @ConfigSection(
             position = 0,
             name = "Main Config",
             description = ""
     )
-    String mainConfig = "mainConfig";
+    String mainConfig = "Main Config";
 
     @ConfigItem(
             keyName = "toggle",
@@ -23,7 +29,8 @@ public interface AutoClickConfig extends Config {
             position = 0,
             section = "mainConfig"
     )
-    default Keybind toggle() {
+    default Keybind toggle()
+    {
         return Keybind.NOT_SET;
     }
 
@@ -34,7 +41,8 @@ public interface AutoClickConfig extends Config {
             position = 3,
             section = "mainConfig"
     )
-    default int min() {
+    default int min()
+    {
         return 120;
     }
 
@@ -45,7 +53,8 @@ public interface AutoClickConfig extends Config {
             position = 4,
             section = "mainConfig"
     )
-    default int max() {
+    default int max()
+    {
         return 240;
     }
 
@@ -56,7 +65,8 @@ public interface AutoClickConfig extends Config {
             position = 5,
             section = "mainConfig"
     )
-    default int target() {
+    default int target()
+    {
         return 180;
     }
 
@@ -67,7 +77,8 @@ public interface AutoClickConfig extends Config {
             position = 6,
             section = "mainConfig"
     )
-    default int deviation() {
+    default int deviation()
+    {
         return 10;
     }
 
@@ -78,7 +89,8 @@ public interface AutoClickConfig extends Config {
             position = 7,
             section = "mainConfig"
     )
-    default boolean weightedDistribution() {
+    default boolean weightedDistribution()
+    {
         return false;
     }
 
@@ -87,7 +99,7 @@ public interface AutoClickConfig extends Config {
             name = "Helper Config",
             description = ""
     )
-    String helperConfig = "helperConfig";
+    String helperConfig = "Helper Config";
 
     @ConfigItem(
             keyName = "autoDisable",
@@ -96,7 +108,8 @@ public interface AutoClickConfig extends Config {
             position = 0,
             section = "helperConfig"
     )
-    default boolean autoDisableHp() {
+    default boolean autoDisableHp()
+    {
         return false;
     }
 
@@ -107,7 +120,8 @@ public interface AutoClickConfig extends Config {
             position = 1,
             section = "helperConfig"
     )
-    default boolean autoDisableInv() {
+    default boolean autoDisableInv()
+    {
         return false;
     }
 
@@ -123,7 +137,8 @@ public interface AutoClickConfig extends Config {
             hidden = true,
             section = "helperConfig"
     )
-    default int hpThreshold() {
+    default int hpThreshold()
+    {
         return 200;
     }
 
@@ -135,7 +150,8 @@ public interface AutoClickConfig extends Config {
             hidden = true,
             section = "helperConfig"
     )
-    default boolean flash() {
+    default boolean flash()
+    {
         return false;
     }
 }

@@ -91,7 +91,7 @@ public class fdropPlugin extends Plugin
 		if(!config.gPB().equals(""))
 		{
 			client.addChatMessage(GAMEMESSAGE, "", "Corrupted challenge duration: <col=ff0000>" + config.gTot() + "</col>. Personal best: " + config.gPB()+".", null);
-			client.addChatMessage(GAMEMESSAGE, "", "Preparation time: <col=ff0000>" + config.gPrep() + "</col>. Hunllef kill time: " + config.gKill()+".", null);
+			client.addChatMessage(GAMEMESSAGE, "", "Preparation time: <col=ff0000>" + config.gPrep() + "</col>. Hunllef kill time: <col=ff0000>" + config.gKill()+"</col>.", null);
 			client.addChatMessage(GAMEMESSAGE, "", "Your Corrupted Gauntlet completion count is: <col=ff0000>" + config.gkc() + "</col>.", null);
 			client.addChatMessage(GAMEMESSAGE, "", "Your reward awaits you in the nearby chest.", null);
 		}

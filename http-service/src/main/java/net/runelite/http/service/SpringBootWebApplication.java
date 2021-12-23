@@ -68,7 +68,7 @@ import org.sql2o.quirks.NoQuirks;
 public class SpringBootWebApplication extends SpringBootServletInitializer
 {
 	@Bean
-	protected ServletContextListener listener()
+	protected ServletContextListener listener(OkHttpClient client)
 	{
 		return new ServletContextListener()
 		{
@@ -82,7 +82,6 @@ public class SpringBootWebApplication extends SpringBootServletInitializer
 			public void contextDestroyed(ServletContextEvent sce)
 			{
 				// Destroy okhttp client
-				OkHttpClient client = RuneLiteAPI.CLIENT;
 				client.dispatcher().executorService().shutdown();
 				client.connectionPool().evictAll();
 				try
@@ -118,13 +117,6 @@ public class SpringBootWebApplication extends SpringBootServletInitializer
 		return new DataSourceProperties();
 	}
 
-	@ConfigurationProperties(prefix = "datasource.runelite-tracker")
-	@Bean("dataSourceRuneLiteTracker")
-	public DataSourceProperties dataSourcePropertiesTracker()
-	{
-		return new DataSourceProperties();
-	}
-
 	@Bean(value = "runelite", destroyMethod = "")
 	public DataSource runeliteDataSource(@Qualifier("dataSourceRuneLite") DataSourceProperties dataSourceProperties)
 	{
@@ -137,12 +129,6 @@ public class SpringBootWebApplication extends SpringBootServletInitializer
 		return getDataSource(dataSourceProperties);
 	}
 
-	@Bean(value = "runelite-tracker", destroyMethod = "")
-	public DataSource runeliteTrackerDataSource(@Qualifier("dataSourceRuneLiteTracker") DataSourceProperties dataSourceProperties)
-	{
-		return getDataSource(dataSourceProperties);
-	}
-
 	@Bean("Runelite SQL2O")
 	public Sql2o sql2o(@Qualifier("runelite") DataSource dataSource)
 	{
@@ -151,12 +137,6 @@ public class SpringBootWebApplication extends SpringBootServletInitializer
 
 	@Bean("Runelite Cache SQL2O")
 	public Sql2o cacheSql2o(@Qualifier("runelite-cache") DataSource dataSource)
-	{
-		return createSql2oFromDataSource(dataSource);
-	}
-
-	@Bean("Runelite XP Tracker SQL2O")
-	public Sql2o trackerSql2o(@Qualifier("runelite-tracker") DataSource dataSource)
 	{
 		return createSql2oFromDataSource(dataSource);
 	}
@@ -217,6 +197,12 @@ public class SpringBootWebApplication extends SpringBootServletInitializer
 			loggerContext.setPackagingDataEnabled(false);
 			log.debug("Disabling logback packaging data");
 		}
+	}
+
+	@Bean
+	public OkHttpClient okHttpClient()
+	{
+		return RuneLiteAPI.CLIENT;
 	}
 
 	public static void main(String[] args)

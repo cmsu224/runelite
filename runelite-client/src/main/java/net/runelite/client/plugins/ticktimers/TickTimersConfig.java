@@ -108,6 +108,18 @@ public interface TickTimersConfig extends Config {
         return false;
     }
 
+    @ConfigItem(
+            position = 21,
+            keyName = "gameTickOverlay",
+            name = "NPCs to Display ticks (ID-style/attackspeed@animationIDs) 1-melee, 2-mage, 3-range",
+            description = ""
+    )
+    default String gameTickOverlay() {
+        return "3272-3/6@426@345,\n" +
+                "3269-1/5@386,\n" +
+                "3271-1/6@395";
+    }
+
     public static enum FontStyle {
         BOLD("Bold", 1),
         ITALIC("Italic", 2),

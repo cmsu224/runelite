@@ -104,10 +104,7 @@ public class TimersOverlay extends Overlay
                 continue;
             }
 
-            if (config.ignoreNonAttacking() && npc.getNpcInteracting() != client.getLocalPlayer() && npc.getMonsterType() != GENERAL_GRAARDOR)
-            {
-                continue;
-            }
+            //if (config.ignoreNonAttacking() && npc.getNpcInteracting() != client.getLocalPlayer() && npc.getMonsterType() != GENERAL_GRAARDOR) { continue; }
 
             // If you are not tank at bandos, prayer range instead of melee on graardor attack
             if (npc.getMonsterType() == GENERAL_GRAARDOR && npc.getNpcInteracting() != client.getLocalPlayer())

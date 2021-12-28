@@ -45,6 +45,18 @@ class NPCContainer {
         }
     }
 
+    NPCContainer(NPC npc, int attackSpeed, AttackStyle a, ImmutableSet<Integer> animations) {
+        this.npc = npc;
+        this.npcName = npc.getName();
+        this.npcIndex = npc.getIndex();
+        this.npcInteracting = npc.getInteracting();
+        this.attackStyle = a;
+        this.attackSpeed = attackSpeed;
+        this.ticksUntilAttack = -1;
+        this.animations = animations;
+        this.monsterType = null;
+    }
+
     public int hashCode() {
         return Objects.hash(new Object[]{this.npc});
     }

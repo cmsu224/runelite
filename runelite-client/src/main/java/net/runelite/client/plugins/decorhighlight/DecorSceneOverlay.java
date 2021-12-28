@@ -44,6 +44,9 @@ public class DecorSceneOverlay extends Overlay {
     }
 
     public Dimension render(Graphics2D g) {
+        if(!toggle){
+            return null;
+        }
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         g.setColor(Color.RED);
         Iterator var3 = this.client.getGraphicsObjects().iterator();

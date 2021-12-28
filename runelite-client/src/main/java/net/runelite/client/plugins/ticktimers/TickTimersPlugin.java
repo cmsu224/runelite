@@ -5,6 +5,7 @@
 
 package net.runelite.client.plugins.ticktimers;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.UnmodifiableIterator;
 import com.google.inject.Provides;
 import java.util.Arrays;
@@ -51,6 +52,7 @@ public class TickTimersPlugin extends Plugin {
     private Set<NPCContainer> npcContainers = new HashSet();
     private boolean validRegion;
     private long lastTickTime;
+    Set<String> gameNPCsWhitelist;
 
     public TickTimersPlugin() {
     }
@@ -61,6 +63,8 @@ public class TickTimersPlugin extends Plugin {
     }
 
     public void startUp() {
+        this.gameNPCsWhitelist = new HashSet();
+        this.parse_list(this.gameNPCsWhitelist, this.config.gameTickOverlay());
         if (this.client.getGameState() == GameState.LOGGED_IN) {
             if (this.regionCheck()) {
                 this.npcContainers.clear();
@@ -156,14 +160,17 @@ public class TickTimersPlugin extends Plugin {
     }
 
     private boolean regionCheck() {
-        return Arrays.stream(this.client.getMapRegions()).anyMatch((x) -> {
-            return x == 11346 || x == 11347 || x == 11603 || x == 11602;
-        });
+        return true;
+        //return Arrays.stream(this.client.getMapRegions()).anyMatch((x) -> {
+            //return x == 11346 || x == 11347 || x == 11603 || x == 11602;
+        //});
     }
 
     @Subscribe
     public void onConfigChanged(ConfigChanged event) {
         if (event.getGroup().equals("TickTimers")) {
+            this.gameNPCsWhitelist.clear();
+            this.parse_list(this.gameNPCsWhitelist, this.config.gameTickOverlay());
             if (event.getKey().equals("mirrorMode") && this.regionCheck()) {
                 this.overlayManager.remove(this.timersOverlay);
                 this.overlayManager.add(this.timersOverlay);
@@ -220,6 +227,7 @@ public class TickTimersPlugin extends Plugin {
                     //this.npcContainers.add(new NPCContainer(npc, this.npcManager.getAttackSpeed(npc.getId())));
                     //}
                 default:
+                    parse_string(gameNPCsWhitelist, npc.getId(), npc);
             }
         }
     }
@@ -247,6 +255,9 @@ public class TickTimersPlugin extends Plugin {
                         return c.getNpc() == npc;
                     });
                 default:
+                    this.npcContainers.removeIf((c) -> {
+                        return c.getNpc() == npc;
+                    });
             }
         }
     }
@@ -258,4 +269,107 @@ public class TickTimersPlugin extends Plugin {
     long getLastTickTime() {
         return this.lastTickTime;
     }
+
+    private void parse_list(Set<String> list, String src) {
+        String[] split = src.split(",");
+
+        for(int i = 0; i < split.length; ++i) {
+            String s = split[i].trim();
+
+            try {
+                //int n = Integer.parseInt(n);
+                list.add(s);
+            } catch (NumberFormatException var7) {
+            }
+        }
+
+    }
+
+    private boolean parse_string(Set<String> str, int hlID, NPC npc){
+        String tID = "";
+        String junk = "";
+
+        for(String strMain : str){
+            String[] sID = strMain.split(",");
+            tID = sID[0].trim();
+            if(tID.equals("")){
+                break;
+            }
+            if(tID.contains("/")){
+                sID = tID.split("/");
+                tID = sID[0].trim();
+            }
+            if(tID.contains("-")){
+                sID = strMain.split("-");
+                tID = sID[0].trim();
+            }
+
+            try {
+                if(Integer.parseInt(tID) == hlID){
+                    set_vars(strMain, npc);
+                    return true;
+                }
+            } catch (NumberFormatException ignored) {
+            }
+
+        }
+        return false;
+    }
+
+    private void set_vars(String src, NPC npc) {
+        String[] split = src.split("/");
+        ImmutableSet<Integer> animations = new ImmutableSet.Builder<Integer>().build();
+
+        NPCContainer.AttackStyle style = NPCContainer.AttackStyle.UNKNOWN;
+        int attackSpeed = 4;
+
+        //attack style
+        for(int i = 1; i < split.length; ++i) {
+            String s = split[i].trim();
+            String[] s1 = s.split("@");
+            int c = Integer.parseInt(s1[0]);
+
+            attackSpeed = Integer.parseInt(s1[0]);
+
+        }
+
+        //attack speed
+        String[] split2 = src.split("-");
+        for(int i = 0; i < split2.length; ++i) {
+            if(i == 1){
+                String s = split2[i].trim();
+                String[] split3 = s.split("/");
+                String[] split4 = split3[1].split("@");
+
+                int c = Integer.parseInt(split3[0]);
+                try {
+                    if(c == 1){
+                        style = NPCContainer.AttackStyle.MELEE;
+                    }else if(c == 2){
+                        style = NPCContainer.AttackStyle.MAGE;
+                    }else if(c == 3){
+                        style = NPCContainer.AttackStyle.RANGE;
+                    }
+                } catch (NumberFormatException ignored) {
+                }
+
+                for(int j = 1; j < split2.length; ++j) {
+                    int a1 = Integer.parseInt(split4[j]);
+                    animations = new ImmutableSet.Builder<Integer>()
+                            .addAll(animations)
+                            .add(a1)
+                            .build();
+                }
+
+            }
+        }
+
+        this.npcContainers.add(new NPCContainer(npc, attackSpeed, style, animations));
+
+    }
+
+    public static <T> Set<T> setWith(Set<T> old, T item) {
+        return new ImmutableSet.Builder<T>().addAll(old).add(item).build();
+    }
+
 }

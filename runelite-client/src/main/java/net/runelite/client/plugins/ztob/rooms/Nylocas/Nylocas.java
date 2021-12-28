@@ -666,7 +666,7 @@ public class Nylocas extends Room
 			String strippedTarget = stripColor(target);
 
 			boolean isBig = false;
-			if (config.nyloRecolorBigDifferent() && toEdit.getType() == MenuAction.NPC_SECOND_OPTION.getId())
+			if (config.nyloRecolorBigDifferent() && toEdit.getType().getId() == MenuAction.NPC_SECOND_OPTION.getId())
 			{
 				int eventId = toEdit.getIdentifier();
 				NPC npc = client.getCachedNPCs()[eventId];

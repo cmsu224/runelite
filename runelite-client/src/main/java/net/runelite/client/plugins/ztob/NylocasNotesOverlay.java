@@ -86,7 +86,7 @@ public class NylocasNotesOverlay extends Overlay
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        if(wave < 1 || wave > 30){
+        if(wave < 1 || wave > 30 ||  !config.showTile()){
             return null;
         }
         try {

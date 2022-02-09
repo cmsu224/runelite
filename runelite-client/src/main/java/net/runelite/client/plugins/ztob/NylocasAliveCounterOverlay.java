@@ -104,7 +104,7 @@ public class NylocasAliveCounterOverlay extends Overlay
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
-		if(wave < 1 || wave > 31){
+		if(wave < 1 || wave > 31 || !config.showNotes()){
 			return null;
 		}
 		if(waveNotes == null || waveNotes.equals("")){

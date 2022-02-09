@@ -35,6 +35,26 @@ public interface DecorHighlightConfig extends Config {
     }
 
     @ConfigItem(
+            position = 1,
+            keyName = "reqLoc",
+            name = "Require RegionID for objects",
+            description = "Input list of Region IDs, Instances are always highlighted"
+    )
+    default boolean reqLoc() {
+        return false;
+    }
+
+    @ConfigItem(
+            position = 1,
+            keyName = "mapLocToHighlight",
+            name = "Required Locations",
+            description = ""
+    )
+    default String mapLocToHighlight() {
+        return "";
+    }
+
+    @ConfigItem(
             position = 2,
             keyName = "graphicsObjectsToHighlight",
             name = "Highlight graphics objects",

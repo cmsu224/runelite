@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
+import javax.xml.stream.Location;
 
 import net.runelite.api.*;
 import net.runelite.api.Point;
@@ -24,7 +25,7 @@ public class DecorSceneOverlay extends Overlay {
     private Client client;
     private DecorHighlightPlugin plugin;
     private DecorHighlightConfig config;
-    private Boolean toggle = true;
+    private Boolean toggle = false;
     private int hID = 0;
     private int aoeSize = 1;
     private int dColor = 1;
@@ -34,11 +35,11 @@ public class DecorSceneOverlay extends Overlay {
 
     @Inject
     public DecorSceneOverlay(Client client, DecorHighlightPlugin plugin, DecorHighlightConfig config) {
-        this.client = client;
-        this.plugin = plugin;
-        this.config = config;
-        this.setLayer(OverlayLayer.ABOVE_SCENE);
-        this.setPosition(OverlayPosition.DYNAMIC);
+        client = client;
+        plugin = plugin;
+        config = config;
+        setLayer(OverlayLayer.ABOVE_SCENE);
+        setPosition(OverlayPosition.DYNAMIC);
         startTick = plugin.getLastTick();
         tickCounter = 0;
     }
@@ -49,8 +50,8 @@ public class DecorSceneOverlay extends Overlay {
         }
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         g.setColor(Color.RED);
-        Iterator var3 = this.client.getGraphicsObjects().iterator();
-        Player player = this.client.getLocalPlayer();
+        Iterator var3 = client.getGraphicsObjects().iterator();
+        Player player = client.getLocalPlayer();
         Iterator var2 = client.getNpcs().iterator();
         LocalPoint lp;
         NPC npc = null;
@@ -59,15 +60,16 @@ public class DecorSceneOverlay extends Overlay {
         Polygon tilePoly;
 
         //projectiles
-        List<Projectile> projectiles = this.client.getProjectiles();
-        Iterator var70 = projectiles.iterator();
+        //List<Projectile> projectiles = client.getProjectiles();
+        //Iterator var70 = projectiles.iterator();
+        Iterator var70 = client.getProjectiles().iterator();
         //Iterator var71 = pro
 
         while(var70.hasNext()) {
             Projectile projectile = (Projectile)var70.next();
             int projectileId = projectile.getId();
 
-            if(config.debugProjectiles() || parse_string(this.plugin.gameProjectileWhitelist, projectileId)){
+            if(config.debugProjectiles() || parse_string(plugin.gameProjectileWhitelist, projectileId)){
                 String str = "";
                 if (config.debugProjectiles()) {
                     str = " - "+Integer.toString(projectileId);
@@ -83,11 +85,11 @@ public class DecorSceneOverlay extends Overlay {
                     lp = new LocalPoint(x, y);
 
                     if (aoeSize != 0){
-                        tilePoly = Perspective.getCanvasTileAreaPoly(this.client, lp, aoeSize);
+                        tilePoly = Perspective.getCanvasTileAreaPoly(client, lp, aoeSize);
                     }else
                         tilePoly = null;
 
-                    this.renderPoly(g, aColor, tilePoly, ticksRemaining + str, lp);
+                    renderPoly(g, aColor, tilePoly, ticksRemaining + str, lp);
                 }
             }
         }
@@ -96,7 +98,7 @@ public class DecorSceneOverlay extends Overlay {
         while(var2.hasNext()) {
             npc = (NPC)var2.next();
 
-            if(config.debugNPCs() || parse_string(this.plugin.gameNPCsWhitelist, npc.getId())){
+            if(config.debugNPCs() || parse_string(plugin.gameNPCsWhitelist, npc.getId())){
                 npcComposition = npc.getTransformedComposition();
                 if (npcComposition != null) {
                     size = npcComposition.getSize();
@@ -115,16 +117,16 @@ public class DecorSceneOverlay extends Overlay {
                             aoeSize = size;
                         }
 
-                        tilePoly = Perspective.getCanvasTileAreaPoly(this.client, lp, aoeSize);
-                        this.renderPoly(g, aColor, tilePoly, str, lp);
+                        tilePoly = Perspective.getCanvasTileAreaPoly(client, lp, aoeSize);
+                        renderPoly(g, aColor, tilePoly, str, lp);
                     }
                 }
             }
 
-            if (this.config.displayTick()) {
+            if (config.displayTick()) {
                 ////TICK TIMERS
-                if (config.debugNPCs() || parse_string(this.plugin.gameTickWhitelist, npc.getId())) {
-                    int gTick = this.plugin.getLastTick();
+                if (config.debugNPCs() || parse_string(plugin.gameTickWhitelist, npc.getId())) {
+                    int gTick = plugin.getLastTick();
                     if(gTick != startTick){
                         tickCounter = tickCounter - 1;
                         startTick = gTick;
@@ -147,20 +149,28 @@ public class DecorSceneOverlay extends Overlay {
             }
         }
 
-        while(true) {
+        Boolean highLightObjects = false;
+        if(!config.reqLoc()){
+            highLightObjects = true;
+        }else{
+            highLightObjects = parse_string(plugin.locationWhitelist, client.getLocalPlayer().getWorldLocation().getRegionID());
+            if(client.isInInstancedRegion())
+                highLightObjects = true;
+        }
+        while(highLightObjects) {
             GraphicsObject go;
             boolean debug;
             do {
                 if (!var3.hasNext()) {
                     for(int x = 0; x < 104; ++x) {
                         for(int y = 0; y < 104; ++y) {
-                            Tile t = this.client.getScene().getTiles()[this.client.getPlane()][x][y];
+                            Tile t = client.getScene().getTiles()[client.getPlane()][x][y];
                             if (t != null) {
                                 GroundObject decor = t.getGroundObject();
                                 if (decor != null) {
-                                    debug = this.client.isKeyPressed(86) && this.client.isKeyPressed(81);
+                                    debug = client.isKeyPressed(86) && client.isKeyPressed(81);
 
-                                    if (config.debugDecor() || parse_string(this.plugin.groundDecorWhitelist, decor.getId())) {
+                                    if (config.debugDecor() || parse_string(plugin.groundDecorWhitelist, decor.getId())) {
                                         String str = null;
                                         if (config.debugDecor()) {
                                             str = Integer.toString(decor.getId());
@@ -171,7 +181,7 @@ public class DecorSceneOverlay extends Overlay {
                                         lp = decor.getLocalLocation();
                                         int _x = (lp.getX() - 64) / 128;
                                         int _y = (lp.getY() - 64) / 128;
-                                        this.tile(g, _x, _y, aColor, str);
+                                        tile(g, _x, _y, aColor, str);
                                     }
                                 }
 
@@ -181,13 +191,13 @@ public class DecorSceneOverlay extends Overlay {
                                 if (gameObjects != null) {
                                     GameObject[] var5 = gameObjects;
                                     int var6 = gameObjects.length;
-                                    debug = this.client.isKeyPressed(86) && this.client.isKeyPressed(81);
+                                    debug = client.isKeyPressed(86) && client.isKeyPressed(81);
 
                                     for(int var7 = 0; var7 < var6; ++var7) {
                                         GameObject gameObject = var5[var7];
                                         if (gameObject != null && gameObject.getSceneMinLocation().equals(t.getSceneLocation())) {
                                             if (gameObject != null && player.getLocalLocation().distanceTo(gameObject.getLocalLocation()) <= 2400) {
-                                                if (config.debugGameObjects() || parse_string(this.plugin.gameObjectsWhitelist, gameObject.getId())) {
+                                                if (config.debugGameObjects() || parse_string(plugin.gameObjectsWhitelist, gameObject.getId())) {
                                                     //OverlayUtil.renderTileOverlay(g, gameObject, "ID: " + gameObject.getId(), Color.GREEN);
 
                                                     String str = null;
@@ -199,9 +209,9 @@ public class DecorSceneOverlay extends Overlay {
                                                     lp = gameObject.getLocalLocation();
                                                     int _x = (lp.getX() - 64) / 128;
                                                     int _y = (lp.getY() - 64) / 128;
-                                                    //this.tile(g, _x, _y, this.config.highlightColor(), str);
+                                                    //tile(g, _x, _y, config.highlightColor(), str);
 
-                                                    this.renderTileObject(g, gameObject, player, aColor);
+                                                    renderTileObject(g, gameObject, player, aColor);
                                                 }
 
                                             }
@@ -220,8 +230,8 @@ public class DecorSceneOverlay extends Overlay {
                 }
 
                 go = (GraphicsObject)var3.next();
-                debug = this.client.isKeyPressed(86) && this.client.isKeyPressed(81);
-            } while(!debug && !parse_string(this.plugin.graphicsObjectWhitelist, go.getId()));
+                debug = client.isKeyPressed(86) && client.isKeyPressed(81);
+            } while(!debug && !parse_string(plugin.graphicsObjectWhitelist, go.getId()));
 
             String str = null;
             if (config.debugGraphicObjects()) {
@@ -233,27 +243,28 @@ public class DecorSceneOverlay extends Overlay {
             lp = go.getLocation();
             int x = (lp.getX() - 64) / 128;
             int y = (lp.getY() - 64) / 128;
-            this.tile(g, x, y, aColor, str);
+            tile(g, x, y, aColor, str);
 
         }
+        return null;
     }
 
     private void tile(Graphics g, int x, int y, Color c, String textLine1) {
         if(toggle){
-            byte[][][] s = this.client.getTileSettings();
-            int l = (s[1][x][y] & 2) != 0 ? 1 : this.client.getPlane();
-            int[][] h = this.client.getTileHeights()[l];
+            byte[][][] s = client.getTileSettings();
+            int l = (s[1][x][y] & 2) != 0 ? 1 : client.getPlane();
+            int[][] h = client.getTileHeights()[l];
             g.setColor(c);
-            this.line(g, x, y, x + 1, y, h);
-            this.line(g, x, y, x, y + 1, h);
-            this.line(g, x, y + 1, x + 1, y + 1, h);
-            this.line(g, x + 1, y, x + 1, y + 1, h);
+            line(g, x, y, x + 1, y, h);
+            line(g, x, y, x, y + 1, h);
+            line(g, x, y + 1, x + 1, y + 1, h);
+            line(g, x + 1, y, x + 1, y + 1, h);
             int x1 = x + 1;
             int y1 = y + 1;
-            Point p0 = Perspective.localToCanvas(this.client, x << 7, y << 7, h[x][y]);
-            Point p1 = Perspective.localToCanvas(this.client, x1 << 7, y << 7, h[x1][y]);
-            Point p3 = Perspective.localToCanvas(this.client, x << 7, y1 << 7, h[x][y1]);
-            Point p2 = Perspective.localToCanvas(this.client, x1 << 7, y1 << 7, h[x1][y1]);
+            Point p0 = Perspective.localToCanvas(client, x << 7, y << 7, h[x][y]);
+            Point p1 = Perspective.localToCanvas(client, x1 << 7, y << 7, h[x1][y]);
+            Point p3 = Perspective.localToCanvas(client, x << 7, y1 << 7, h[x][y1]);
+            Point p2 = Perspective.localToCanvas(client, x1 << 7, y1 << 7, h[x1][y1]);
             if (p0 != null && p1 != null && p3 != null && p2 != null) {
                 int[] xPoints = new int[]{p0.getX(), p1.getX(), p2.getX(), p3.getX()};
                 int[] yPoints = new int[]{p0.getY(), p1.getY(), p2.getY(), p3.getY()};
@@ -263,7 +274,7 @@ public class DecorSceneOverlay extends Overlay {
 
             if (textLine1 != null) {
                 LocalPoint lp = new LocalPoint(x * 128 + 64, y * 128 + 64);
-                Point p = Perspective.getCanvasTextLocation(this.client, (Graphics2D)g, lp, textLine1, 0);
+                Point p = Perspective.getCanvasTextLocation(client, (Graphics2D)g, lp, textLine1, 0);
                 if (p != null) {
                     g.setColor(Color.BLACK);
                     g.drawString(textLine1, p.getX() + 1, p.getY() + 1);
@@ -275,8 +286,8 @@ public class DecorSceneOverlay extends Overlay {
     }
 
     private void line(Graphics g, int x0, int y0, int x1, int y1, int[][] h) {
-        Point p0 = Perspective.localToCanvas(this.client, x0 << 7, y0 << 7, h[x0][y0]);
-        Point p1 = Perspective.localToCanvas(this.client, x1 << 7, y1 << 7, h[x1][y1]);
+        Point p0 = Perspective.localToCanvas(client, x0 << 7, y0 << 7, h[x0][y0]);
+        Point p1 = Perspective.localToCanvas(client, x1 << 7, y1 << 7, h[x1][y1]);
         if (p0 != null && p1 != null) {
             g.drawLine(p0.getX(), p0.getY(), p1.getX(), p1.getY());
         }
@@ -300,7 +311,7 @@ public class DecorSceneOverlay extends Overlay {
 
             if (textLine1 != null) {
                 //LocalPoint lp = new LocalPoint(lp1.getX() * 128 + 64, lp1.getY() * 128 + 64);
-                Point p = Perspective.getCanvasTextLocation(this.client, (Graphics2D)graphics, lp1, textLine1, 0);
+                Point p = Perspective.getCanvasTextLocation(client, (Graphics2D)graphics, lp1, textLine1, 0);
                 if (p != null) {
                     graphics.setColor(Color.BLACK);
                     graphics.drawString(textLine1, p.getX() + 1, p.getY() + 1);
@@ -330,7 +341,7 @@ public class DecorSceneOverlay extends Overlay {
                 if (aoeSize == 0){
                     poly = tileObject.getCanvasTilePoly();
                 }else{
-                    poly = Perspective.getCanvasTileAreaPoly(this.client, lp, aoeSize);
+                    poly = Perspective.getCanvasTileAreaPoly(client, lp, aoeSize);
                 }
 
                 if (poly != null)
@@ -451,7 +462,7 @@ public class DecorSceneOverlay extends Overlay {
         baseX = (int)((double)baseX + prayerWidget.getBounds().getWidth() / 2.0D);
         baseX -= 5;
         int baseY = (int)prayerWidget.getBounds().getY() - tick * 60 - 5;
-        baseY = (int)((double)baseY + (60.0D - (double)(this.plugin.getLastTick() + 600L - System.currentTimeMillis()) / 600.0D * 60.0D));
+        baseY = (int)((double)baseY + (60.0D - (double)(plugin.getLastTick() + 600L - System.currentTimeMillis()) / 600.0D * 60.0D));
         Rectangle boxRectangle = new Rectangle(10, 5);
         boxRectangle.translate(baseX, baseY);
         renderFilledPolygon(graphics, boxRectangle, color);
@@ -460,18 +471,18 @@ public class DecorSceneOverlay extends Overlay {
     private Widget getWidget(Prayer prayer){
         Varbits var = prayer.getVarbit();
         //prayer group id: 541, child id - melee: 19, mage: 17, range: 18
-        Widget test = this.client.getWidget(541, 32);
+        Widget test = client.getWidget(541, 32);
         //if melee then
         if (var.getId() == 4118){
-            test = this.client.getWidget(541,19);
+            test = client.getWidget(541,19);
         }
         //if mage then
         if (var.getId() == 4116){
-            test = this.client.getWidget(541,17);
+            test = client.getWidget(541,17);
         }
         //if range then
         if (var.getId() == 4117){
-            test = this.client.getWidget(541,18);
+            test = client.getWidget(541,18);
         }
 
         return test;

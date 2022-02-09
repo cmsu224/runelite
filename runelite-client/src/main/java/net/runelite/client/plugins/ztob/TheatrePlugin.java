@@ -19,7 +19,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.ztob.rooms.Nylocas.Nylocas;
 
 @PluginDescriptor(
-        name = "[Maz] Nylo Prefires",
+        name = "<html><font color=#FF0000>[Maz] Nylo Prefires",
         description = "Nylo Pre-fire markers",
         tags = {"ToB"},
         enabledByDefault = false

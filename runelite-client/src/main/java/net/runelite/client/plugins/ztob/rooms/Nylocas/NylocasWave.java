@@ -383,187 +383,187 @@ public class NylocasWave
 	//DUO - RANGE
 	static final ImmutableMap < Integer, NylocasWave > wavesDuoRange = ImmutableMap. < Integer, NylocasWave > builder()
 			.put(1, new NylocasWave(1, new NyloNPC[] {
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_SOUTH, true),
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_SOUTH, true, "Ranger"),
 					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.SOUTH_EAST),
 					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.EAST_NORTH)
-			}))
+			}, "west", "Bow west > east, chin south"))
 			.put(2, new NylocasWave(2, new NyloNPC[] {
 					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.WEST_NORTH),
-					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.SOUTH_WEST, true),
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.EAST_SOUTH)
-			}))
+					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.SOUTH_WEST, true, "Ranger"),
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.EAST_SOUTH, false, "Ranger")
+			}, "east", "Bow west > east, chin south"))
 			.put(3, new NylocasWave(3, new NyloNPC[] {
 					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.WEST_SOUTH),
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.SOUTH_EAST),
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.SOUTH_EAST, false,"Ranger"),
 					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.EAST_NORTH, true)
-			}))
+			}, "south", "Bow west > east, chin south, melee small"))
 			.put(4, new NylocasWave(4, new NyloNPC[] {
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_NORTH),
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_NORTH, false, "Ranger"),
 					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.SOUTH_BIG),
 					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.EAST_SOUTH)
-			}))
+			},"west", "BP big + small"))
 			.put(5, new NylocasWave(5, 16, new NyloNPC[] {
-					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.WEST_BIG),
-					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.SOUTH_EAST),
+					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.WEST_BIG, false, "Ranger"),
+					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.SOUTH_EAST,false, "Ranger"),
 					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.EAST_NORTH)
-			}))
+			},"middle", "cleanup big splits"))
 			.put(6, new NylocasWave(6, new NyloNPC[] {
 					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.WEST_NORTH),
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.SOUTH_WEST),
-					new NyloNPC(NylocasType.MELEE_BIG, NylocasSpawnPoint.EAST_NORTH)
-			}))
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.SOUTH_WEST, false, "Ranger"),
+					new NyloNPC(NylocasType.MELEE_BIG, NylocasSpawnPoint.EAST_NORTH, false, "Ranger")
+			}, "south", "Kill Big range/melee"))
 			.put(7, new NylocasWave(7, 12, new NyloNPC[] {
 					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.SOUTH_EAST),
-					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.SOUTH_BIG, true),
+					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.SOUTH_BIG, true, "Ranger"),
 					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.EAST_NORTH)
-			}))
+			}, "south", "Kill Big range/melee", "Claws"))
 			.put(8, new NylocasWave(8, new NyloNPC[] {
-					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.WEST_BIG, true),
+					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.WEST_BIG, true, "Ranger"),
 					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.SOUTH_WEST),
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.EAST_SOUTH)
-			}))
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.EAST_SOUTH, false, "Ranger")
+			}, "east", "Help Mage big/range east"))
 			.put(9, new NylocasWave(9, 12, new NyloNPC[] {
-					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.WEST_BIG, true),
+					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.WEST_BIG, true, "Ranger"),
 					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.WEST_SOUTH),
 					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.EAST_NORTH)
-			}))
+			}, "west", "CHIN TIME"))
 			.put(10, new NylocasWave(10, 8, new NyloNPC[] {
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_NORTH),
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_SOUTH, true),
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.SOUTH_WEST),
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.SOUTH_EAST),
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.EAST_NORTH, true),
-					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.EAST_NORTH)
-			}))
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_NORTH, false, "Ranger"),
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_SOUTH, true, "Ranger"),
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.SOUTH_WEST, false, "Ranger"),
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.SOUTH_EAST,false, "Ranger"),
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.EAST_NORTH, true, "Ranger"),
+					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.EAST_NORTH, false,"Ranger")
+			}, "west", "CHIN TIME+Cleanup", "Chins"))
 			.put(11, new NylocasWave(11, 8, new NyloNPC[] {
-					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.WEST_BIG, true),
+					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.WEST_BIG, true, "Ranger"),
 					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.SOUTH_WEST),
 					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.SOUTH_EAST),
 					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.EAST_NORTH, true),
 					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.EAST_SOUTH)
-			}))
+			}, "west", "Sang big+Cleanup"))
 			.put(12, new NylocasWave(12, 8, new NyloNPC[] {
 					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.WEST_NORTH),
 					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.WEST_SOUTH, true),
 					new NyloNPC(NylocasType.MELEE_BIG, NylocasSpawnPoint.SOUTH_BIG),
 					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.EAST_NORTH, true),
 					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.EAST_SOUTH)
-			}))
+			}, "west", "Scythe smalls", "Scythe"))
 			.put(13, new NylocasWave(13, 8, new NyloNPC[] {
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_NORTH),
-					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.WEST_SOUTH, true),
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_NORTH,false, "Ranger"),
+					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.WEST_SOUTH, true, "Ranger"),
 					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.SOUTH_WEST),
 					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.SOUTH_EAST),
 					new NyloNPC(NylocasType.MELEE_BIG, NylocasSpawnPoint.EAST_NORTH, true)
-			}))
+			},"west"))
 			.put(14, new NylocasWave(14, 8, new NyloNPC[] {
 					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.WEST_NORTH),
 					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.WEST_SOUTH, true),
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.SOUTH_WEST),
-					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.SOUTH_EAST),
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.SOUTH_WEST,false, "Ranger"),
+					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.SOUTH_EAST,false,"Ranger"),
 					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.EAST_NORTH, true)
-			}))
+			},"south", "Pray range/ignore big"))
 			.put(15, new NylocasWave(15, 8, new NyloNPC[] {
 					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.WEST_NORTH),
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_SOUTH, true),
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_SOUTH, true, "Ranger"),
 					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.SOUTH_BIG),
-					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.EAST_NORTH, true),
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.EAST_SOUTH)
-			}))
+					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.EAST_NORTH, true, "Ranger"),
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.EAST_SOUTH, false,"Ranger")
+			},"east"))
 			.put(16, new NylocasWave(16, new NyloNPC[] {
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_NORTH),
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_NORTH, false,"Ranger"),
 					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.SOUTH_WEST),
 					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.EAST_SOUTH)
-			}))
+			},"west"))
 			.put(17, new NylocasWave(17, 12, new NyloNPC[] {
 					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.WEST_BIG),
 					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.SOUTH_BIG),
 					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.EAST_NORTH)
-			}))
+			}, "middle", "cleanup"))
 			.put(18, new NylocasWave(18, 8, new NyloNPC[] {
-					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.WEST_BIG, true),
-					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.SOUTH_BIG),
-					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.EAST_NORTH)
-			}))
+					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.WEST_BIG, true, "Ranger"),
+					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.SOUTH_BIG,false,"Ranger"),
+					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.EAST_NORTH,false,"Ranger")
+			}, "west", "DONT KILL BIGS"))
 			.put(19, new NylocasWave(19, 12, new NyloNPC[] {
 					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.WEST_BIG),
 					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.SOUTH_BIG),
 					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.EAST_NORTH, true)
-			}))
+			}, "middle", "KILL BIGS after SMALLS"))
 			.put(20, new NylocasWave(20, 16, new NyloNPC[] {
-					new NyloNPC(NylocasType.MELEE_BIG, NylocasSpawnPoint.WEST_BIG),
+					new NyloNPC(NylocasType.MELEE_BIG, NylocasSpawnPoint.WEST_BIG, false, "Ranger"),
 					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.SOUTH_BIG, true),
 					new NyloNPC(NylocasType.MELEE_BIG, NylocasSpawnPoint.EAST_NORTH)
-			}))
+			}, "middle", "Tbow right + 4 BP", "Tbow right"))
 			.put(21, new NylocasWave(21, 8, new NyloNPC[] {
 					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.WEST_NORTH),
 					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.WEST_SOUTH),
 					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.SOUTH_WEST, true),
 					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.SOUTH_EAST),
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.EAST_NORTH),
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.EAST_SOUTH, true)
-			}))
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.EAST_NORTH,false, "Ranger"),
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.EAST_SOUTH, true, "Ranger")
+			},"east", "chins + 4 BP", "chins"))
 			.put(22, new NylocasWave(22, 12, new NyloNPC[] {
 					new NyloNPC(NylocasType.MELEE_BIG, NylocasSpawnPoint.WEST_BIG),
 					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.SOUTH_WEST),
 					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.SOUTH_EAST),
-					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.EAST_NORTH, true)
-			}))
+					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.EAST_NORTH, true, "Ranger")
+			},"middle", "TBOW East", "Tbow Left"))
 			.put(23, new NylocasWave(23, 8, new NyloNPC[] {
-					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.WEST_NORTH),
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_SOUTH),
-					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.SOUTH_BIG, true),
+					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.WEST_NORTH, false, "Ranger"),
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_SOUTH, false, "Ranger"),
+					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.SOUTH_BIG, true, "Ranger"),
 					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.EAST_NORTH)
-			}))
+			}, "south", "1 BP + Tbow south", "Tbow"))
 			.put(24, new NylocasWave(24, 8, new NyloNPC[] {
-					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.WEST_BIG, true),
+					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.WEST_BIG, true, "Ranger"),
 					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.SOUTH_BIG, true),
 					new NyloNPC(NylocasType.MELEE_BIG, NylocasSpawnPoint.EAST_NORTH, true)
-			}))
+			}, "west", "BP +Tbow+ BP", "Tbow"))
 			.put(25, new NylocasWave(25, 8, new NyloNPC[] {
 					new NyloNPC(NylocasType.MELEE_BIG, NylocasSpawnPoint.WEST_BIG, true),
-					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.SOUTH_BIG),
+					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.SOUTH_BIG, false, "Ranger"),
 					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.EAST_NORTH)
-			}))
+			}, "south", "Kill Big R on pillar, Tbow", "Tbow"))
 			.put(26, new NylocasWave(26, new NyloNPC[] {
 					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.WEST_BIG, true),
 					new NyloNPC(NylocasType.MELEE_BIG, NylocasSpawnPoint.SOUTH_BIG),
 					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.EAST_NORTH)
-			}))
+			}, "middle", "Kill low tick Bigs+Cleanup"))
 			.put(27, new NylocasWave(27, 8, new NyloNPC[] {
 					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.WEST_BIG),
-					new NyloNPC(NylocasType.MELEE_BIG, NylocasSpawnPoint.SOUTH_BIG, true),
+					new NyloNPC(NylocasType.MELEE_BIG, NylocasSpawnPoint.SOUTH_BIG, true, "Ranger"),
 					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.EAST_NORTH)
-			}))
+			},"south", "Path South, BP Range flick big", "BP"))
 			.put(28, new NylocasWave(28, new NyloNPC[] {
 					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.WEST_NORTH),
 					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_SOUTH, true),
-					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.SOUTH_WEST),
-					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.SOUTH_EAST),
+					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.SOUTH_WEST, false, "Ranger"),
+					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.SOUTH_EAST, false, "Ranger"),
 					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.EAST_NORTH),
 					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.EAST_SOUTH)
-			}))
+			},"south", "cleanup + left flicker","BP"))
 			.put(29, new NylocasWave(29, new NyloNPC[] {
-					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.WEST_NORTH, true),
-					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_SOUTH),
+					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.WEST_NORTH, true, "Ranger"),
+					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_SOUTH, false, "Ranger"),
 					new NyloNPC(NylocasType.MELEE_BIG, NylocasSpawnPoint.SOUTH_BIG),
 					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.EAST_NORTH),
 					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.EAST_SOUTH, true)
-			}))
+			},"west", "Right side flickers"))
 			.put(30, new NylocasWave(30, new NyloNPC[] {
-					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.WEST_BIG),
-					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.SOUTH_WEST),
-					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.SOUTH_EAST),
+					new NyloNPC(NylocasType.RANGE_BIG, NylocasSpawnPoint.WEST_BIG, false, "Ranger"),
+					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.SOUTH_WEST, false, "Ranger"),
+					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.SOUTH_EAST, false, "Ranger"),
 					new NyloNPC(NylocasType.MAGE_BIG, NylocasSpawnPoint.EAST_BIG, true)
-			}))
+			},"west", "BP on tick 4", "BP tick 4"))
 			.put(31, new NylocasWave(31, new NyloNPC[] {
 					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.WEST_NORTH),
 					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.WEST_SOUTH),
-					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.SOUTH_WEST),
-					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.SOUTH_EAST),
+					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.SOUTH_WEST,false,"Ranger"),
+					new NyloNPC(NylocasType.MELEE_SMALL, NylocasSpawnPoint.SOUTH_EAST,false,"Ranger"),
 					new NyloNPC(NylocasType.MAGE_SMALL, NylocasSpawnPoint.EAST_NORTH),
 					new NyloNPC(NylocasType.RANGE_SMALL, NylocasSpawnPoint.EAST_SOUTH)
-			}))
+			},"south", "KILL LOW TICKS", "CHINS"))
 			.build();
 
 	//TRIO - Mage

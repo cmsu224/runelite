@@ -99,7 +99,7 @@ public class NylocasOverlay extends RoomOverlay
                         if (lp != null)
                         {
                             Polygon poly = getCanvasTileAreaPoly(client, lp, npc.getComposition().getSize(), -25);
-                            renderPoly(graphics, Color.CYAN, poly, 1);
+                            renderPoly(graphics, Color.GREEN, poly, 1);
                         }
                     }
 
@@ -124,7 +124,7 @@ public class NylocasOverlay extends RoomOverlay
                         if (lp != null)
                         {
                             Polygon poly = getCanvasTileAreaPoly(client, lp, npc.getComposition().getSize(), -25);
-                            renderPoly(graphics, Color.CYAN, poly, 1);
+                            renderPoly(graphics, Color.GREEN, poly, 1);
                         }
                     }
 
@@ -136,7 +136,7 @@ public class NylocasOverlay extends RoomOverlay
                         if (lp != null)
                         {
                             Polygon poly = getCanvasTileAreaPoly(client, lp, npc.getComposition().getSize(), -25);
-                            renderPoly(graphics, Color.CYAN, poly, 1);
+                            renderPoly(graphics, Color.WHITE, poly, 1);
                         }
                     }
 
@@ -160,7 +160,7 @@ public class NylocasOverlay extends RoomOverlay
                         if (lp != null)
                         {
                             Polygon poly = getCanvasTileAreaPoly(client, lp, npc.getComposition().getSize(), -25);
-                            renderPoly(graphics, Color.CYAN, poly, 1);
+                            renderPoly(graphics, Color.GREEN, poly, 1);
                         }
                     }
 
@@ -172,7 +172,7 @@ public class NylocasOverlay extends RoomOverlay
                         if (lp != null)
                         {
                             Polygon poly = getCanvasTileAreaPoly(client, lp, npc.getComposition().getSize(), -25);
-                            renderPoly(graphics, Color.CYAN, poly, 1);
+                            renderPoly(graphics, Color.WHITE, poly, 1);
                         }
                     }
 
@@ -184,7 +184,7 @@ public class NylocasOverlay extends RoomOverlay
                         if (lp != null)
                         {
                             Polygon poly = getCanvasTileAreaPoly(client, lp, npc.getComposition().getSize(), -25);
-                            renderPoly(graphics, Color.CYAN, poly, 1);
+                            renderPoly(graphics, Color.WHITE, poly, 1);
                         }
                     }
 
@@ -219,7 +219,7 @@ public class NylocasOverlay extends RoomOverlay
                         if (lp != null)
                         {
                             Polygon poly = getCanvasTileAreaPoly(client, lp, npc.getComposition().getSize(), -25);
-                            renderPoly(graphics, Color.CYAN, poly, 1);
+                            renderPoly(graphics, Color.GREEN, poly, 1);
                         }
                     }
 
@@ -231,7 +231,7 @@ public class NylocasOverlay extends RoomOverlay
                         if (lp != null)
                         {
                             Polygon poly = getCanvasTileAreaPoly(client, lp, npc.getComposition().getSize(), -25);
-                            renderPoly(graphics, Color.CYAN, poly, 1);
+                            renderPoly(graphics, Color.WHITE, poly, 1);
                         }
                     }
 
@@ -243,7 +243,7 @@ public class NylocasOverlay extends RoomOverlay
                         if (lp != null)
                         {
                             Polygon poly = getCanvasTileAreaPoly(client, lp, npc.getComposition().getSize(), -25);
-                            renderPoly(graphics, Color.CYAN, poly, 1);
+                            renderPoly(graphics, Color.WHITE, poly, 1);
                         }
                     }
 

@@ -10,12 +10,9 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.inject.Inject;
 
-import net.runelite.api.ChatMessageType;
+import net.runelite.api.Client;
 import net.runelite.api.events.GameTick;
-import net.runelite.client.chat.ChatColorType;
-import net.runelite.client.chat.ChatMessageBuilder;
 import net.runelite.client.chat.ChatMessageManager;
-import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -26,10 +23,12 @@ import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.HotkeyListener;
 
 @PluginDescriptor(
-        name = "[Maz] Decor Highlight",
+        name = "<html><font color=#FF0000>[Maz] Decor Highlight",
         description = "Highlights ground decor \"graphics objects\" by ID in-game"
 )
 public class DecorHighlightPlugin extends Plugin {
+    @Inject
+    private Client client;
     @Inject
     private OverlayManager overlayManager;
     @Inject
@@ -46,6 +45,7 @@ public class DecorHighlightPlugin extends Plugin {
     Set<String> gameNPCsWhitelist;
     Set<String> gameProjectileWhitelist;
     Set<String> gameTickWhitelist;
+    Set<String> locationWhitelist;
 
     private int lastTick = 0;
 
@@ -65,12 +65,14 @@ public class DecorHighlightPlugin extends Plugin {
         this.gameNPCsWhitelist = new HashSet();
         this.gameProjectileWhitelist = new HashSet();
         this.gameTickWhitelist = new HashSet<>();
+        this.locationWhitelist = new HashSet<>();
         this.parse_list(this.graphicsObjectWhitelist, this.config.graphicsObjectsToHighlight());
         this.parse_list(this.groundDecorWhitelist, this.config.groundDecorToHighlight());
         this.parse_list(this.gameObjectsWhitelist, this.config.gameObjectsToHighlight());
         this.parse_list(this.gameNPCsWhitelist, this.config.npcHighlight());
         this.parse_list(this.gameProjectileWhitelist, this.config.projectileHighlight());
         this.parse_list(this.gameTickWhitelist, this.config.gameTickOverlay());
+        this.parse_list(this.locationWhitelist, this.config.mapLocToHighlight());
         keyManager.registerKeyListener(hotkeyListener);
     }
 
@@ -88,12 +90,14 @@ public class DecorHighlightPlugin extends Plugin {
             this.gameNPCsWhitelist.clear();
             this.gameProjectileWhitelist.clear();
             this.gameTickWhitelist.clear();
+            this.locationWhitelist.clear();
             this.parse_list(this.graphicsObjectWhitelist, this.config.graphicsObjectsToHighlight());
             this.parse_list(this.groundDecorWhitelist, this.config.groundDecorToHighlight());
             this.parse_list(this.gameObjectsWhitelist, this.config.gameObjectsToHighlight());
             this.parse_list(this.gameNPCsWhitelist, this.config.npcHighlight());
             this.parse_list(this.gameProjectileWhitelist, this.config.projectileHighlight());
             this.parse_list(this.gameTickWhitelist, this.config.gameTickOverlay());
+            this.parse_list(this.locationWhitelist, this.config.mapLocToHighlight());
         }
     }
 

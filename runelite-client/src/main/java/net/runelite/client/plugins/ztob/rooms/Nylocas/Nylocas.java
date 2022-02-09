@@ -409,7 +409,54 @@ public class Nylocas extends Room
 			if(config.nyloPrefiresDuoMage()){
 				potentialWave = NylocasWave.wavesDuoMage.get(wave).getWaveData();
 				notes = NylocasWave.wavesDuoMage.get(wave).getNotes();
-			}else{
+			}else if(config.nyloPrefiresDuoRange()){
+				potentialWave = NylocasWave.wavesDuoRange.get(wave).getWaveData();
+				notes = NylocasWave.wavesDuoRange.get(wave).getNotes();
+			}
+			//trio
+			else if(config.nyloPrefiresTrioMage()){
+				potentialWave = NylocasWave.wavesTrioMage.get(wave).getWaveData();
+				notes = NylocasWave.wavesTrioMage.get(wave).getNotes();
+			}else if(config.nyloPrefiresTrioRange()){
+				potentialWave = NylocasWave.wavesTrioRange.get(wave).getWaveData();
+				notes = NylocasWave.wavesTrioRange.get(wave).getNotes();
+			}else if(config.nyloPrefiresTrioMelee()){
+				potentialWave = NylocasWave.wavesTrioMelee.get(wave).getWaveData();
+				notes = NylocasWave.wavesTrioMelee.get(wave).getNotes();
+			}
+			//4man
+			else if(config.nyloPrefires4manMeleeWest()){
+				potentialWave = NylocasWave.waves4manMeleeWest.get(wave).getWaveData();
+				notes = NylocasWave.waves4manMeleeWest.get(wave).getNotes();
+			}else if(config.nyloPrefires4manRange()){
+				potentialWave = NylocasWave.waves4manRange.get(wave).getWaveData();
+				notes = NylocasWave.waves4manRange.get(wave).getNotes();
+			}else if(config.nyloPrefires4manMage()){
+				potentialWave = NylocasWave.waves4manMage.get(wave).getWaveData();
+				notes = NylocasWave.waves4manMage.get(wave).getNotes();
+			}else if(config.nyloPrefires4manMeleeEast()){
+				potentialWave = NylocasWave.waves4manMeleeEast.get(wave).getWaveData();
+				notes = NylocasWave.waves4manMeleeEast.get(wave).getNotes();
+			}
+			//5man
+			else if(config.nyloPrefires5manMageWest()){
+				potentialWave = NylocasWave.waves5manMageWest.get(wave).getWaveData();
+				notes = NylocasWave.waves5manMageWest.get(wave).getNotes();
+			}else if(config.nyloPrefires5manRange()){
+				potentialWave = NylocasWave.waves5manRange.get(wave).getWaveData();
+				notes = NylocasWave.waves5manRange.get(wave).getNotes();
+			}else if(config.nyloPrefires5manMeleeEast()){
+				potentialWave = NylocasWave.waves5manMeleeEast.get(wave).getWaveData();
+				notes = NylocasWave.waves5manMeleeEast.get(wave).getNotes();
+			}else if(config.nyloPrefires5manMageEast()){
+				potentialWave = NylocasWave.waves5manMageEast.get(wave).getWaveData();
+				notes = NylocasWave.waves5manMageEast.get(wave).getNotes();
+			}else if(config.nyloPrefires5manMeleeWest()){
+				potentialWave = NylocasWave.waves5manMeleeWest.get(wave).getWaveData();
+				notes = NylocasWave.waves5manMeleeWest.get(wave).getNotes();
+			}
+			//else normal waves
+			else{
 				potentialWave = NylocasWave.waves.get(wave).getWaveData();
 			}
 

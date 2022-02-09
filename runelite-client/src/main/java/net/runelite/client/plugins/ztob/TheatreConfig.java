@@ -16,6 +16,22 @@ import net.runelite.client.config.*;
 
 public interface TheatreConfig extends Config
 {
+    @ConfigItem(
+            position = -1,
+            keyName = "showNotes",
+            name = "Show Notes",
+            description = ""
+    )
+    default boolean showNotes(){ return true; }
+
+    @ConfigItem(
+            position = -1,
+            keyName = "showTile",
+            name = "Show Tiles",
+            description = ""
+    )
+    default boolean showTile(){ return true; }
+
     @ConfigSection(
             name = "Duo",
             description = "Settings for DUO Prefires",

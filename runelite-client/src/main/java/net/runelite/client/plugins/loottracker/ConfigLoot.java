@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Jasper Ketelaar <Jasper0781@gmail.com>
+ * Copyright (c) 2022, Adam <Adam@sigterm.info>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,40 +22,52 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.plugins.mta;
+package net.runelite.client.plugins.loottracker;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import javax.inject.Inject;
-import net.runelite.client.ui.FontManager;
-import net.runelite.client.ui.overlay.Overlay;
-import net.runelite.client.ui.overlay.OverlayLayer;
-import net.runelite.client.ui.overlay.OverlayPosition;
+import java.time.Instant;
+import java.util.Arrays;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import net.runelite.http.api.loottracker.LootRecordType;
 
-public class MTAInventoryOverlay extends Overlay
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(of = {"type", "name"})
+class ConfigLoot
 {
-	private final MTAPlugin plugin;
+	LootRecordType type;
+	String name;
+	int kills;
+	Instant first = Instant.now();
+	Instant last;
+	int[] drops;
 
-	@Inject
-	public MTAInventoryOverlay(MTAPlugin plugin)
+	ConfigLoot(LootRecordType type, String name)
 	{
-		this.plugin = plugin;
-		setPosition(OverlayPosition.DYNAMIC);
-		setLayer(OverlayLayer.ABOVE_WIDGETS);
+		this.type = type;
+		this.name = name;
+		this.drops = new int[0];
 	}
 
-	@Override
-	public Dimension render(Graphics2D graphics)
+	void add(int id, int qty)
 	{
-		for (MTARoom room : plugin.getRooms())
+		for (int i = 0; i < drops.length; i += 2)
 		{
-			if (room.inside())
+			if (drops[i] == id)
 			{
-				graphics.setFont(FontManager.getRunescapeBoldFont());
-				room.over(graphics);
+				drops[i + 1] += qty;
+				return;
 			}
 		}
 
-		return null;
+		drops = Arrays.copyOf(drops, drops.length + 2);
+		drops[drops.length - 2] = id;
+		drops[drops.length - 1] = qty;
+	}
+
+	int numDrops()
+	{
+		return drops.length / 2;
 	}
 }

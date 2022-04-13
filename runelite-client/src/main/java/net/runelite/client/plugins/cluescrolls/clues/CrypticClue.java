@@ -153,7 +153,7 @@ public class CrypticClue extends ClueScroll implements TextClueScroll, NpcClueSc
 		new CrypticClue("Search the crates in the Port Sarim Fishing shop.", CRATE_9534, new WorldPoint(3012, 3222, 0), "Search the crates, by the door, in Gerrant's Fishy Business in Port Sarim."),
 		new CrypticClue("Speak to The Lady of the Lake.", "The Lady of the Lake", new WorldPoint(2924, 3405, 0), "Talk to The Lady of the Lake in Taverley."),
 		new CrypticClue("Rotting next to a ditch. Dig next to the fish.", new WorldPoint(3547, 3183, 0), "Dig next to a fishing spot on the south-east side of Burgh de Rott."),
-		new CrypticClue("The King's magic won't be wasted by me.", "Guardian Mummy", new WorldPoint(1934, 4427, 0), "Talk to the Guardian mummy inside the Pyramid Plunder minigame in Sophanem."),
+		new CrypticClue("The King's magic won't be wasted by me.", "Guardian mummy", new WorldPoint(1934, 4427, 0), "Talk to the Guardian mummy inside the Pyramid Plunder minigame in Sophanem."),
 		new CrypticClue("Dig where the forces of Zamorak and Saradomin collide.", new WorldPoint(3049, 4839, 0), "Dig next to the law rift in the Abyss."),
 		new CrypticClue("Search the boxes in the goblin house near Lumbridge.", BOXES, new WorldPoint(3245, 3245, 0), "Goblin house on the eastern side of the river outside of Lumbridge."),
 		new CrypticClue("W marks the spot.", new WorldPoint(2867, 3546, 0), "Dig in the middle of the Warriors' Guild entrance hall."),
@@ -326,7 +326,9 @@ public class CrypticClue extends ClueScroll implements TextClueScroll, NpcClueSc
 		new CrypticClue("A graceful man of many colours, his crates must be full of many delights.", "Hill Giant", CRATE_42067, new WorldPoint(1506, 3590, 2), "Kill any Hill Giant for a medium key. Then search the crate on the top floor of Osten's clothing shop in Shayzien."),
 		new CrypticClue("Search the basket of apples in an orchard, south of the unknown grave surrounded by white roses.", APPLE_BASKET, new WorldPoint(1718, 3626, 0), "Search the middle apple basket in the apple orchard north of Hosidius."),
 		new CrypticClue("Dig in the lair of red wings, within the temple of the Sun and Moon.", new WorldPoint(1820, 9935, 0), "Forthos Dungeon. In the center of the red dragons."),
-		new CrypticClue("Within the town of Lumbridge lives a man named Bob. He walks out of his door and takes 1 step east, 7 steps north, 5 steps west and 1 step south. Once he arrives, he digs a hole and buries his treasure.", new WorldPoint(3230, 3209, 0), "Just west of the bush outside Bob's axe shop in Lumbridge.")
+		new CrypticClue("Within the town of Lumbridge lives a man named Bob. He walks out of his door and takes 1 step east, 7 steps north, 5 steps west and 1 step south. Once he arrives, he digs a hole and buries his treasure.", new WorldPoint(3230, 3209, 0), "Just west of the bush outside Bob's axe shop in Lumbridge."),
+		new CrypticClue("Try not to let yourself be dazzled when you search these drawers.", DRAWERS_350, new WorldPoint(2561, 3323, 0), "Search the western drawers in Jimmy Dazzler's home near the East Ardougne Rat Pits."),
+		new CrypticClue("The Big High War God left his mark on this place.", new WorldPoint(3572, 4372, 0), "Dig anywhere in Yu'biusk. Fairy ring BLQ.")
 	);
 
 	private final String text;

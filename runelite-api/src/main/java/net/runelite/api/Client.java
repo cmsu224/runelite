@@ -24,6 +24,7 @@
  */
 package net.runelite.api;
 
+import com.jagex.oldscape.pub.OAuthApi;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.util.EnumSet;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.runelite.api.annotations.Varbit;
 import net.runelite.api.annotations.VisibleForDevtools;
 import net.runelite.api.annotations.VisibleForExternalPlugins;
 import net.runelite.api.clan.ClanChannel;
@@ -50,7 +52,7 @@ import org.intellij.lang.annotations.MagicConstant;
 /**
  * Represents the RuneScape client.
  */
-public interface Client extends GameEngine
+public interface Client extends OAuthApi, GameEngine
 {
 	/**
 	 * The injected client invokes these callbacks to send events to us
@@ -163,10 +165,13 @@ public interface Client extends GameEngine
 	void stopNow();
 
 	/**
+	 * DEPRECATED. See getAccountHash instead.
 	 * Gets the current logged in username.
 	 *
 	 * @return the logged in username
+	 * @see OAuthApi#getAccountHash()
 	 */
+	@Deprecated
 	String getUsername();
 
 	/**
@@ -396,6 +401,20 @@ public interface Client extends GameEngine
 	 */
 	@Nullable
 	SpritePixels createItemSprite(int itemId, int quantity, int border, int shadowColor, @MagicConstant(valuesFromClass = ItemQuantityMode.class) int stackable, boolean noted, int scale);
+
+	/**
+	 * Get the item model cache. These models are used for drawing widgets of type {@link net.runelite.api.widgets.WidgetType#MODEL}
+	 * and inventory item icons
+	 * @return
+	 */
+	NodeCache getItemModelCache();
+
+	/**
+	 * Get the item sprite cache. These are 2d SpritePixels which are used to raster item images on the inventory and
+	 * on widgets of type {@link net.runelite.api.widgets.WidgetType#GRAPHIC}
+	 * @return
+	 */
+	NodeCache getItemSpriteCache();
 
 	/**
 	 * Loads and creates the sprite images of the passed archive and file IDs.
@@ -755,12 +774,22 @@ public interface Client extends GameEngine
 	int getVar(VarPlayer varPlayer);
 
 	/**
-	 * Gets a value corresponding to the passed variable.
+	 * Gets a value corresponding to the passed varbit.
 	 *
-	 * @param varbit the variable
+	 * @param varbit the varbit id
+	 * @return the value
+	 * @see Client#getVarbitValue(int)
+	 */
+	@Deprecated
+	int getVar(@Varbit int varbit);
+
+	/**
+	 * Gets a value corresponding to the passed varbit.
+	 *
+	 * @param varbit the varbit id
 	 * @return the value
 	 */
-	int getVar(Varbits varbit);
+	int getVarbitValue(@Varbit int varbit);
 
 	/**
 	 * Gets an int value corresponding to the passed variable.
@@ -786,15 +815,6 @@ public interface Client extends GameEngine
 	 */
 	@VisibleForExternalPlugins
 	int getVarpValue(int varpId);
-
-	/**
-	 * Gets the value of a given Varbit.
-	 *
-	 * @param varbitId the varbit id
-	 * @return the value
-	 */
-	@VisibleForExternalPlugins
-	int getVarbitValue(int varbitId);
 
 	/**
 	 * Gets the value of a given VarClientInt
@@ -825,12 +845,12 @@ public interface Client extends GameEngine
 	void setVar(VarClientInt varClientStr, int value);
 
 	/**
-	 * Sets the value of a given variable.
+	 * Sets the value of a varbit
 	 *
-	 * @param varbit the variable
+	 * @param varbit the varbit id
 	 * @param value the new value
 	 */
-	void setVarbit(Varbits varbit, int value);
+	void setVarbit(@Varbit int varbit, int value);
 
 	/**
 	 * Gets the varbit composition for a given varbit id
@@ -848,10 +868,10 @@ public interface Client extends GameEngine
 	 * @param varps passed varbits
 	 * @param varbitId the variable ID
 	 * @return the value
-	 * @see Varbits#id
+	 * @see Varbits
 	 */
 	@VisibleForDevtools
-	int getVarbitValue(int[] varps, int varbitId);
+	int getVarbitValue(int[] varps, @Varbit int varbitId);
 
 	/**
 	 * Sets the value of a given variable.
@@ -859,10 +879,10 @@ public interface Client extends GameEngine
 	 * @param varps passed varbits
 	 * @param varbit the variable
 	 * @param value the value
-	 * @see Varbits#id
+	 * @see Varbits
 	 */
 	@VisibleForDevtools
-	void setVarbitValue(int[] varps, int varbit, int value);
+	void setVarbitValue(int[] varps, @Varbit int varbit, int value);
 
 	/**
 	 * Mark the given varp as changed, causing var listeners to be
@@ -1868,6 +1888,18 @@ public interface Client extends GameEngine
 	 * Sets if a widget is in target mode
 	 */
 	void setSpellSelected(boolean selected);
+
+	/**
+	 * Get if an item is selected with "Use"
+	 * @return 1 if selected, else 0
+	 */
+	int getSelectedItem();
+
+	/**
+	 * If an item is selected, this is the item index in the inventory.
+	 * @return
+	 */
+	int getSelectedItemIndex();
 
 	/**
 	 * Returns client item composition cache

@@ -138,6 +138,30 @@ public interface MenuEntrySwapperConfig extends Config
 	}
 
 	@ConfigItem(
+		position = -2,
+		keyName = "objectLeftClickCustomization",
+		name = "Customizable left-click",
+		description = "Allows customization of left-clicks on objects",
+		section = objectSection
+	)
+	default boolean objectLeftClickCustomization()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		position = -2,
+		keyName = "npcLeftClickCustomization",
+		name = "Customizable left-click",
+		description = "Allows customization of left-clicks on NPCs",
+		section = npcSection
+	)
+	default boolean npcLeftClickCustomization()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 		keyName = "swapAdmire",
 		name = "Admire",
 		description = "Swap Admire with Teleport, Spellbook and Perks (max cape) for mounted skill capes.",

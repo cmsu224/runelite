@@ -374,7 +374,6 @@ public interface Client extends OAuthApi, GameEngine
 	 *
 	 * @return the logged in player
 	 */
-	@Nullable
 	Player getLocalPlayer();
 
 	/**
@@ -1920,6 +1919,12 @@ public interface Client extends OAuthApi, GameEngine
 	 * Returns client item composition cache
 	 */
 	NodeCache getItemCompositionCache();
+
+	/**
+	 * Returns client object composition cache
+	 * @return
+	 */
+	NodeCache getObjectCompositionCache();
 
 	/**
 	 * Returns the array of cross sprites that appear and animate when left-clicking

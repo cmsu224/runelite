@@ -128,7 +128,7 @@ public class PvPPlayerIndicatorsPlugin extends Plugin {
                     type -= 2000;
                 }
 
-                if (type == MenuAction.WALK.getId() || type == MenuAction.SPELL_CAST_ON_PLAYER.getId() || type == MenuAction.ITEM_USE_ON_PLAYER.getId() || type == MenuAction.PLAYER_FIRST_OPTION.getId() || type == MenuAction.PLAYER_SECOND_OPTION.getId() || type == MenuAction.PLAYER_THIRD_OPTION.getId() || type == MenuAction.PLAYER_FOURTH_OPTION.getId() || type == MenuAction.PLAYER_FIFTH_OPTION.getId() || type == MenuAction.PLAYER_SIXTH_OPTION.getId() || type == MenuAction.PLAYER_SEVENTH_OPTION.getId() || type == MenuAction.PLAYER_EIGTH_OPTION.getId() || type == MenuAction.RUNELITE_PLAYER.getId()) {
+                if (type == MenuAction.WALK.getId() || type == MenuAction.ITEM_USE_ON_PLAYER.getId() || type == MenuAction.PLAYER_FIRST_OPTION.getId() || type == MenuAction.PLAYER_SECOND_OPTION.getId() || type == MenuAction.PLAYER_THIRD_OPTION.getId() || type == MenuAction.PLAYER_FOURTH_OPTION.getId() || type == MenuAction.PLAYER_FIFTH_OPTION.getId() || type == MenuAction.PLAYER_SIXTH_OPTION.getId() || type == MenuAction.PLAYER_SEVENTH_OPTION.getId() || type == MenuAction.PLAYER_EIGTH_OPTION.getId() || type == MenuAction.RUNELITE_PLAYER.getId()) {
                     Player[] players = this.client.getCachedPlayers();
                     Player player = null;
                     int identifier = entry.getIdentifier();
@@ -141,7 +141,7 @@ public class PvPPlayerIndicatorsPlugin extends Plugin {
                     }
 
                     if (player != null) {
-                        net.runelite.client.plugins.pvpplayerindicators.Decorations decorations = this.getDecorations(player);
+                        Decorations decorations = this.getDecorations(player);
                         if (decorations != null) {
                             String oldTarget = entry.getTarget();
                             String newTarget = this.decorateTarget(oldTarget, decorations);
@@ -155,11 +155,11 @@ public class PvPPlayerIndicatorsPlugin extends Plugin {
             if (modified) {
                 this.client.setMenuEntries(menuEntries);
             }
-
         }
+
     }
 
-    private net.runelite.client.plugins.pvpplayerindicators.Decorations getDecorations(Player player) {
+    private Decorations getDecorations(Player player) {
         int image = -1;
         Color color = null;
         if (this.config.highlightFriends() && this.client.isFriended(player.getName(), false)) {
@@ -186,22 +186,23 @@ public class PvPPlayerIndicatorsPlugin extends Plugin {
             color = this.config.getTargetColor();
         }
 
-        return image == -1 && color == null ? null : new net.runelite.client.plugins.pvpplayerindicators.Decorations(image, color);
+        return image == -1 && color == null ? null : new Decorations(image, color);
     }
 
-    private String decorateTarget(String oldTarget, net.runelite.client.plugins.pvpplayerindicators.Decorations decorations) {
+    private String decorateTarget(String oldTarget, Decorations decorations) {
         String newTarget = oldTarget;
+        int var10000;
         if (decorations.getColor() != null && this.config.colorPlayerMenu()) {
-            int idx = oldTarget.indexOf(62);
-            if (idx != -1) {
-                newTarget = oldTarget.substring(idx + 1);
+            var10000 = oldTarget.indexOf(62);
+            if (var10000 != -1) {
+                newTarget = oldTarget.substring(var10000 + 1);
             }
 
             newTarget = ColorUtil.prependColorTag(newTarget, decorations.getColor());
         }
 
         if (decorations.getImage() != -1 && this.config.showFriendsChatRanks()) {
-            int var10000 = decorations.getImage();
+            var10000 = decorations.getImage();
             newTarget = "<img=" + var10000 + ">" + newTarget;
         }
 

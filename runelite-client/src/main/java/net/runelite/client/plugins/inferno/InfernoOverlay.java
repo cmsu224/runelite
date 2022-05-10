@@ -552,19 +552,19 @@ public class InfernoOverlay extends Overlay
     }
 
     private Widget getWidget(Prayer prayer){
-        Varbits var = prayer.getVarbit();
+        int var = prayer.getVarbit();
         //prayer group id: 541, child id - melee: 19, mage: 17, range: 18
         Widget test = this.client.getWidget(541, 32);
         //if melee then
-        if (var.getId() == 4118){
+        if (var == 4118){
             test = this.client.getWidget(541,19);
         }
         //if mage then
-        if (var.getId() == 4116){
+        if (var == 4116){
             test = this.client.getWidget(541,17);
         }
         //if range then
-        if (var.getId() == 4117){
+        if (var == 4117){
             test = this.client.getWidget(541,18);
         }
 

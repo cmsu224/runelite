@@ -28,32 +28,7 @@ public enum VoiceOver {
     THERE_IS("There is...", "there_is.wav"),
     UMBRA("Umbra!", "umbra.wav"),
     UMBRA_FAIL("Umbra, don't fail me!", "umbra_dont_fail_me.wav"),
-    VIRUS_FLOW("Let the virus flow through you!", "virus_flow_through_you.wav"),
-
-    mawsenSIPHON("mawsenA siphon will solve this!", "mawsen_a_siphon_will_solve_this.wav"),
-    mawsenAT_LAST("mawsenAT LAST!", "mawsen_at_last.wav"),
-    mawsenCONTAIN_THIS("mawsenContain this!", "mawsen_contain_this.wav"),
-    mawsenCRUOR("mawsenCruor!", "mawsen_cruor.wav"),
-    mawsenCRUOR_FAIL("mawsenCruor, don't fail me!", "mawsen_cruor_dont_fail_me.wav"),
-    mawsenDARKEN_SHADOW("mawsenDarken my shadow!", "mawsen_darken_my_shadow.wav"),
-    mawsenBLOOD_SACRIFICE("mawsenI demand a blood sacrifice!", "mawsen_demand_blood_sacrifice.wav"),
-    mawsenPRISON_OF_ICE("mawsenDie now, in a prison of ice!", "mawsen_die_now_in_prison_of_ice.wav"),
-    mawsenEMBRACE_DARKNESS("mawsenEmbrace darkness!", "mawsen_embrace_darkness.wav"),
-    mawsenFEAR_THE_SHADOW("mawsenFear the shadow!", "mawsen_fear_the_shadow.wav"),
-    mawsenSOUL_WITH_SMOKE("mawsenFill my soul with smoke!", "mawsen_fill_my_soul_with_smoke.wav"),
-    mawsenFLOOD_MY_LUNGS("mawsenFlood my lungs with blood!", "mawsen_flood_my_lungs_with_blood.wav"),
-    mawsenFUMUS("mawsenFumus!", "mawsen_fumus.wav"),
-    mawsenFUMUS_FAIL("mawsenFumus, don't fail me!", "mawsen_fumus_dont_fail_me.wav"),
-    mawsenGLACIES("mawsenGlacies!", "mawsen_glacies.wav"),
-    mawsenGLACIES_FAIL("mawsenGlacies, don't fail me!", "mawsen_glacies_dont_fail_me.wav"),
-    mawsenPOWER_OF_ICE("mawsenInfuse me with the power of ice!", "mawsen_infuse_me_withe_power_of_ice.wav"),
-    mawsenNO_ESCAPE("mawsenNO ESCAPE!", "mawsen_no_escape.wav"),
-    mawsenPOWER_OF_ZAROS("mawsenNOW, THE POWER OF ZAROS!", "mawsen_now_the_power_of_zaros.wav"),
-    mawsenTASTE_MY_WRATH("mawsenTaste my wrath!", "mawsen_taste_my_wrath.wav"),
-    mawsenTHERE_IS("mawsenThere is...", "mawsen_there_is.wav"),
-    mawsenUMBRA("mawsenUmbra!", "mawsen_umbra.wav"),
-    mawsenUMBRA_FAIL("mawsenUmbra, don't fail me!", "mawsen_umbra_dont_fail_me.wav"),
-    mawsenVIRUS_FLOW("mawsenLet the virus flow through you!", "mawsen_virus_flow_through_you.wav");
+    VIRUS_FLOW("Let the virus flow through you!", "virus_flow_through_you.wav");
 
     private static final Map<String, VoiceOver> triggerLines = new HashMap<>();
 
@@ -71,8 +46,8 @@ public enum VoiceOver {
         this.file = file;
     }
 
-    public static VoiceOver forTriggerLine(String triggerLine, String custom) {
-        return triggerLines.get(custom+triggerLine);
+    public static VoiceOver forTriggerLine(String triggerLine) {
+        return triggerLines.get(triggerLine);
     }
 
     public String trigger() {

@@ -5,10 +5,10 @@ import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.Range;
 
-@ConfigGroup(NexNostalgiaConfig.GROUP)
-public interface NexNostalgiaConfig extends Config {
+@ConfigGroup(MawsenNostalgiaConfig.GROUP)
+public interface MawsenNostalgiaConfig extends Config {
 
-    String GROUP = "nexNostalgia";
+    String GROUP = "MawsenNostalgia";
 
     @ConfigItem(
             keyName = "volumeGain",

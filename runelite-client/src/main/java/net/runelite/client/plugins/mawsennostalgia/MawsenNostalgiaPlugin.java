@@ -40,7 +40,7 @@ public class MawsenNostalgiaPlugin extends Plugin {
     private Client client;
 
     @Inject
-    private NexNostalgiaConfig config;
+    private MawsenNostalgiaConfig config;
 
     @Override
     protected void startUp() {
@@ -55,8 +55,8 @@ public class MawsenNostalgiaPlugin extends Plugin {
     }
 
     @Provides
-    NexNostalgiaConfig provideConfig(ConfigManager configManager) {
-        return configManager.getConfig(NexNostalgiaConfig.class);
+    MawsenNostalgiaConfig provideConfig(ConfigManager configManager) {
+        return configManager.getConfig(MawsenNostalgiaConfig.class);
     }
 
     @Subscribe
@@ -116,7 +116,7 @@ public class MawsenNostalgiaPlugin extends Plugin {
     @Subscribe
     public void onConfigChanged(ConfigChanged event) {
 
-        if (event.getGroup().equals(NexNostalgiaConfig.GROUP)) {
+        if (event.getGroup().equals(MawsenNostalgiaConfig.GROUP)) {
             log.debug("Updating volume gain to {} Db", config.volumeGain());
             updateVolumeGain(config.volumeGain());
         }
@@ -164,7 +164,7 @@ public class MawsenNostalgiaPlugin extends Plugin {
     }
 
     private void loadSound(Clip audioClip, String name) {
-        InputStream in = getClass().getResourceAsStream("/sounds/" + name);
+        InputStream in = getClass().getResourceAsStream(name);
 
         if (in == null) {
             log.warn("Missing audio file {}", name);

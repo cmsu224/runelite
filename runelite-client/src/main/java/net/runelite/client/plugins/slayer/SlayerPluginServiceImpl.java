@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Tomas Slusny <slusnucky@gmail.com>
+ * Copyright (c) 2022, Adam <Adam@sigterm.info>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,8 +22,51 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.party.messages;
+package net.runelite.client.plugins.slayer;
 
-public class Part extends WebsocketMessage
+import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import net.runelite.api.NPC;
+
+@Singleton
+class SlayerPluginServiceImpl implements SlayerPluginService
 {
+	private final SlayerPlugin plugin;
+
+	@Inject
+	private SlayerPluginServiceImpl(final SlayerPlugin plugin)
+	{
+		this.plugin = plugin;
+	}
+
+	@Override
+	public List<NPC> getTargets()
+	{
+		return plugin.getTargets();
+	}
+
+	@Override
+	public String getTask()
+	{
+		return plugin.getTaskName();
+	}
+
+	@Override
+	public String getTaskLocation()
+	{
+		return plugin.getTaskLocation();
+	}
+
+	@Override
+	public int getInitialAmount()
+	{
+		return plugin.getInitialAmount();
+	}
+
+	@Override
+	public int getRemainingAmount()
+	{
+		return plugin.getAmount();
+	}
 }

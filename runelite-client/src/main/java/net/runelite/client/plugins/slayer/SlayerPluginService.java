@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Tomas Slusny <slusnucky@gmail.com>
+ * Copyright (c) 2022, Adam <Adam@sigterm.info>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,15 +22,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.party.messages;
+package net.runelite.client.plugins.slayer;
 
-import java.util.UUID;
-import lombok.EqualsAndHashCode;
-import lombok.Value;
+import java.util.List;
+import javax.annotation.Nullable;
+import net.runelite.api.NPC;
 
-@Value
-@EqualsAndHashCode(callSuper = true)
-public class UserPart extends WebsocketMessage
+public interface SlayerPluginService
 {
-	private final UUID memberId;
+	/**
+	 * Get targets for current slayer task
+	 *
+	 * @return pattern list of target npc
+	 */
+	List<NPC> getTargets();
+
+	@Nullable
+	String getTask();
+
+	@Nullable
+	String getTaskLocation();
+
+	int getInitialAmount();
+
+	int getRemainingAmount();
 }

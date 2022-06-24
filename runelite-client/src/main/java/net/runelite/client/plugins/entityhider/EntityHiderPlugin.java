@@ -33,11 +33,11 @@ import net.runelite.api.NPC;
 import net.runelite.api.Player;
 import net.runelite.api.Projectile;
 import net.runelite.api.Renderable;
-import net.runelite.api.Varbits;
 import net.runelite.client.callback.Hooks;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.game.NpcUtil;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
@@ -58,6 +58,9 @@ public class EntityHiderPlugin extends Plugin
 	@Inject
 	private Hooks hooks;
 
+	@Inject
+	private NpcUtil npcUtil;
+
 	private boolean hideOthers;
 	private boolean hideOthers2D;
 	private boolean hideFriends;
@@ -68,6 +71,7 @@ public class EntityHiderPlugin extends Plugin
 	private boolean hideLocalPlayer2D;
 	private boolean hideNPCs;
 	private boolean hideNPCs2D;
+	private boolean hideDeadNpcs;
 	private boolean hidePets;
 	private boolean hideAttackers;
 	private boolean hideProjectiles;
@@ -118,6 +122,7 @@ public class EntityHiderPlugin extends Plugin
 
 		hideNPCs = config.hideNPCs();
 		hideNPCs2D = config.hideNPCs2D();
+		hideDeadNpcs = config.hideDeadNpcs();
 
 		hidePets = config.hidePets();
 
@@ -145,13 +150,6 @@ public class EntityHiderPlugin extends Plugin
 			if (player == local)
 			{
 				return !(drawingUI ? hideLocalPlayer2D : hideLocalPlayer);
-			}
-
-			final boolean inPvp = client.getVarbitValue(Varbits.PVP_SPEC_ORB) == 1;
-			if (inPvp)
-			{
-				// In PVP we only allow hiding everyone or no one
-				return !(drawingUI ? hideOthers2D : hideOthers);
 			}
 
 			if (hideAttackers && player.getInteracting() == local)
@@ -182,9 +180,15 @@ public class EntityHiderPlugin extends Plugin
 		{
 			NPC npc = (NPC) renderable;
 
-			if (npc.getComposition().isFollower() && npc == client.getFollower())
+			if (npc.getComposition().isFollower() && npc != client.getFollower())
 			{
 				return !hidePets;
+			}
+
+			// dead npcs can also be interacting so prioritize it over the interacting check
+			if (npcUtil.isDying(npc) && hideDeadNpcs)
+			{
+				return false;
 			}
 
 			if (npc.getInteracting() == client.getLocalPlayer())

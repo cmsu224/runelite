@@ -31,7 +31,7 @@ import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.components.ComponentConstants;
 import net.runelite.client.ui.overlay.components.TitleComponent;
 import net.runelite.client.util.QuantityFormatter;
-import net.runelite.client.ws.PartyService;
+import net.runelite.client.party.PartyService;
 
 class SocketDpsDifferenceOverlay
 extends OverlayPanel {

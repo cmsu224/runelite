@@ -29,7 +29,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 
 @PluginDescriptor(
-        name = "[Maz] Boss Tick Timers",
+        name = "<html><font color=#FF0000>[Maz] Boss Tick Timers",
         enabledByDefault = false,
         description = "Tick timers for bosses",
         tags = {"pvm", "bossing"}

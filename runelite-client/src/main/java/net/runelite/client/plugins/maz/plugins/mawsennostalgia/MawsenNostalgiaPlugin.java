@@ -29,7 +29,7 @@ import java.util.Map;
 
 @Slf4j
 @PluginDescriptor(
-        name = "<html><font color=#FF0000>Mawsen Nostalgia",
+        name = "Mawsen Nostalgia",
         tags = {"mawsen", "maz", "nex"}
 )
 public class MawsenNostalgiaPlugin extends Plugin {

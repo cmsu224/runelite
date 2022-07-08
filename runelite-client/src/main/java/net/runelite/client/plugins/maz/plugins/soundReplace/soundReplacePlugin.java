@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @PluginDescriptor(
-        name = "<html><font color=#FF0000>[Maz] Sound Replacer",
+        name = "Sound Replacer",
         description = "Replace ingame sound",
         tags = {"maz","sound", "ben", "mitch", "ree"},
         enabledByDefault = false

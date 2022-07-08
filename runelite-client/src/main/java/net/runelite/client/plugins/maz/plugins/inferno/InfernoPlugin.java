@@ -44,7 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @PluginDescriptor(
-        name = "[Maz] Inferno",
+        name = "Inferno Maz",
         enabledByDefault = false,
         description = "Inferno helper",
         tags = {"combat", "overlay", "pve", "pvm"}

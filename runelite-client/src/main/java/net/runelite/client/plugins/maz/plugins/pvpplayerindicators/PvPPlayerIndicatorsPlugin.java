@@ -28,7 +28,7 @@ import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.ColorUtil;
 
 @PluginDescriptor(
-        name = "<html><font color=#25c550>[S] Player Indicators",
+        name = "Wildy Indicator",
         description = "Highlight players on-screen and/or on the minimap",
         tags = {"highlight", "minimap", "overlay", "players"},
         conflicts = {"Player Indicators"}

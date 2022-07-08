@@ -20,7 +20,7 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
 @PluginDescriptor(
-        name = "<html><font color=#FF0000>[Maz] GameObjectHide",
+        name = "GameObjectH Maz",
         description = "Removes listed game objects. Input game object IDs seperated by a comma -> 1234,4567",
         tags = {"game object, hide, remove"},
         enabledByDefault = false

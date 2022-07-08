@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @PluginDescriptor(
-        name = "<html><font color=#FF0000>[Maz] CountDown"
+        name = "CountDown Maz"
 )
 public class CountDownPlugin extends Plugin {
     private static final Logger log = LoggerFactory.getLogger(CountDownPlugin.class);

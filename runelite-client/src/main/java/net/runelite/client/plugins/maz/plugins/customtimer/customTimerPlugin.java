@@ -24,7 +24,7 @@ import net.runelite.client.ui.overlay.OverlayManager;
 
 @Slf4j
 @PluginDescriptor(
-        name = "<html><font color=#FF0000>[Maz] Reminder"
+        name = "Reminder Maz"
 )
 
 public class customTimerPlugin extends Plugin{

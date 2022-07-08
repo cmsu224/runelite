@@ -23,7 +23,7 @@ import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.HotkeyListener;
 
 @PluginDescriptor(
-        name = "<html><font color=#FF0000>[Maz] Highlight All",
+        name = "Highlight All",
         description = "Highlights anything by ID in-game"
 )
 public class HighlightAnythingPlugin extends Plugin {

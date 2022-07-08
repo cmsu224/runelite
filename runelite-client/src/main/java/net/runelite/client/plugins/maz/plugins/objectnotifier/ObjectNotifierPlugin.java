@@ -26,7 +26,7 @@ import net.runelite.http.api.worlds.WorldType;
 import net.runelite.client.game.ItemManager;
 
 @PluginDescriptor(
-        name = "<html><font color=#FF0000>[Maz] Object Notifier",
+        name = "Object Notifier Maz",
         description = "Notifies you when the desired items spawns. Optional config settings to send notification on object spawning.",
         tags = {"object, notifier"},
         enabledByDefault = false

@@ -37,11 +37,12 @@ import net.runelite.api.InventoryID;
 import net.runelite.api.Item;
 import net.runelite.api.ItemContainer;
 import static net.runelite.api.ItemID.*;
+import net.runelite.api.ScriptID;
 import net.runelite.api.Skill;
 import net.runelite.api.Varbits;
 import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.events.BeforeRender;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.ScriptPostFired;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
@@ -139,7 +140,6 @@ public class RunEnergyPlugin extends Plugin
 
 	private boolean localPlayerRunningToDestination;
 	private WorldPoint prevLocalPlayerLocation;
-	private String runTimeRemaining;
 
 	@Provides
 	RunEnergyConfig getConfig(ConfigManager configManager)
@@ -171,16 +171,14 @@ public class RunEnergyPlugin extends Plugin
 			prevLocalPlayerLocation.distanceTo(client.getLocalPlayer().getWorldLocation()) > 1;
 
 		prevLocalPlayerLocation = client.getLocalPlayer().getWorldLocation();
-
-		runTimeRemaining = energyConfig.replaceOrbText() ? getEstimatedRunTimeRemaining(true) : null;
 	}
 
 	@Subscribe
-	public void onBeforeRender(BeforeRender beforeRender)
+	public void onScriptPostFired(ScriptPostFired scriptPostFired)
 	{
-		if (runTimeRemaining != null)
+		if (scriptPostFired.getScriptId() == ScriptID.ORBS_UPDATE_RUNENERGY && energyConfig.replaceOrbText())
 		{
-			setRunOrbText(runTimeRemaining);
+			setRunOrbText(getEstimatedRunTimeRemaining(true));
 		}
 	}
 
@@ -211,17 +209,20 @@ public class RunEnergyPlugin extends Plugin
 	String getEstimatedRunTimeRemaining(boolean inSeconds)
 	{
 		// Calculate the amount of energy lost every tick.
-		// Negative weight has the same depletion effect as 0 kg.
-		final int effectiveWeight = Math.max(client.getWeight(), 0);
-		double lossRate = (Math.min(effectiveWeight, 64) / 100.0) + 0.64;
+		// Negative weight has the same depletion effect as 0 kg. >64kg counts as 64kg.
+		final int effectiveWeight = Math.min(Math.max(client.getWeight(), 0), 64);
+
+		// 100% energy is 10000 energy units
+		int energyUnitsLost = effectiveWeight * 67 / 64 + 67;
 
 		if (client.getVarbitValue(Varbits.RUN_SLOWED_DEPLETION_ACTIVE) != 0)
 		{
-			lossRate *= 0.3; // Stamina effect reduces energy depletion to 30%
+			energyUnitsLost *= 0.3; // Stamina effect reduces energy depletion to 30%
 		}
 
-		// Calculate the number of seconds left
-		final double secondsLeft = (client.getEnergy() * Constants.GAME_TICK_LENGTH) / (lossRate * 1000.0);
+		// Math.ceil is correct here - only need 1 energy unit to run
+		final double ticksLeft = Math.ceil(client.getEnergy() / (energyUnitsLost / 100.0));
+		final double secondsLeft = ticksLeft * Constants.GAME_TICK_LENGTH / 1000.0;
 
 		// Return the text
 		if (inSeconds)

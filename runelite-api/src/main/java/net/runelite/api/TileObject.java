@@ -37,6 +37,18 @@ import net.runelite.api.coords.WorldPoint;
  */
 public interface TileObject
 {
+	/**
+	 * A bitfield containing various flags:
+	 * <pre>{@code
+	 * (RL) plane = bits >> 49 & 3
+	 * id = bits >> 17 & 0xffffffff
+	 * wall = bits >> 16 & 1
+	 * type = bits >> 14 & 3
+	 * scene y = bits >> 7 & 127
+	 * scene x = bits >> 0 & 127
+	 * }</pre>
+	 * Type 0 = player, 1 = npc, 2 = game object, 3 = item
+	 */
 	long getHash();
 
 	/**
@@ -89,6 +101,7 @@ public interface TileObject
 	/**
 	 * Calculates the position of the center of this tile on the canvas
 	 */
+	@Nullable
 	Point getCanvasLocation();
 
 	/**
@@ -96,11 +109,13 @@ public interface TileObject
 	 *
 	 * @param zOffset Vertical offset to apply before projection
 	 */
+	@Nullable
 	Point getCanvasLocation(int zOffset);
 
 	/**
 	 * Creates a polygon outlining the tile this object is on
 	 */
+	@Nullable
 	Polygon getCanvasTilePoly();
 
 	/**
@@ -110,6 +125,7 @@ public interface TileObject
 	 * @param zOffset Vertical offset to apply before projection
 	 * @return the canvas point to draw the text at
 	 */
+	@Nullable
 	Point getCanvasTextLocation(Graphics2D graphics, String text, int zOffset);
 
 	/**
@@ -118,6 +134,7 @@ public interface TileObject
 	 *
 	 * @return mini-map location on canvas
 	 */
+	@Nullable
 	Point getMinimapLocation();
 
 	/**

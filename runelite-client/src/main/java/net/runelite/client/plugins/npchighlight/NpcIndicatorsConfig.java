@@ -32,9 +32,11 @@ import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
 import net.runelite.client.config.Range;
 
-@ConfigGroup("npcindicators")
+@ConfigGroup(NpcIndicatorsConfig.GROUP)
 public interface NpcIndicatorsConfig extends Config
 {
+	String GROUP = "npcindicators";
+
 	@ConfigSection(
 		name = "Render style",
 		description = "The render style of NPC highlighting",
@@ -172,7 +174,7 @@ public interface NpcIndicatorsConfig extends Config
 		position = 7,
 		keyName = "npcToHighlight",
 		name = "NPCs to Highlight",
-		description = "List of NPC names to highlight"
+		description = "List of NPC names to highlight. Format: (NPC), (NPC)"
 	)
 	default String getNpcToHighlight()
 	{
@@ -242,9 +244,21 @@ public interface NpcIndicatorsConfig extends Config
 		position = 13,
 		keyName = "showRespawnTimer",
 		name = "Show respawn timer",
-		description = "Show respawn timer of tagged NPCs")
+		description = "Show respawn timer of tagged NPCs"
+	)
 	default boolean showRespawnTimer()
 	{
 		return false;
+	}
+
+	@ConfigItem(
+		position = 14,
+		keyName = "ignorePets",
+		name = "Ignore pets",
+		description = "Excludes pets from being highlighted"
+	)
+	default boolean ignorePets()
+	{
+		return true;
 	}
 }

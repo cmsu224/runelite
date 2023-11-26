@@ -34,11 +34,10 @@ import static net.runelite.api.MenuAction.RUNELITE_OVERLAY_CONFIG;
 import net.runelite.api.NPC;
 import net.runelite.api.Varbits;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.widgets.InterfaceID;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetID;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import static net.runelite.client.ui.overlay.OverlayManager.OPTION_CONFIGURE;
-import net.runelite.client.ui.overlay.OverlayMenuEntry;
 import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayPriority;
@@ -61,13 +60,13 @@ class CorpDamageOverlay extends OverlayPanel
 		this.client = client;
 		this.corpPlugin = corpPlugin;
 		this.config = config;
-		getMenuEntries().add(new OverlayMenuEntry(RUNELITE_OVERLAY_CONFIG, OPTION_CONFIGURE, "Corp overlay"));
+		addMenuEntry(RUNELITE_OVERLAY_CONFIG, OPTION_CONFIGURE, "Corp overlay");
 	}
 
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
-		Widget damageWidget = client.getWidget(WidgetID.CORP_DAMAGE, 0);
+		Widget damageWidget = client.getWidget(InterfaceID.CORP_DAMAGE, 0);
 		if (damageWidget != null)
 		{
 			damageWidget.setHidden(true);

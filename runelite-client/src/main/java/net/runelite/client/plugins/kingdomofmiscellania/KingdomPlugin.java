@@ -28,6 +28,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
@@ -110,20 +111,24 @@ public class KingdomPlugin extends Plugin
 	@Subscribe
 	public void onVarbitChanged(VarbitChanged event)
 	{
-		final int coffer = client.getVarbitValue(Varbits.KINGDOM_COFFER);
-		final int approval = client.getVarbitValue(Varbits.KINGDOM_APPROVAL);
-
-		if (client.getGameState() == GameState.LOGGED_IN
-			&& isThroneOfMiscellaniaCompleted()
-			&& (isInKingdom() || coffer > 0 && approval > 0)
-			&& (getCoffer() != coffer || getApproval() != approval))
+		if (event.getVarbitId() == Varbits.KINGDOM_COFFER || event.getVarbitId() == Varbits.KINGDOM_APPROVAL)
 		{
-			setLastChanged(Instant.now());
-			setCoffer(coffer);
-			setApproval(approval);
-		}
+			final int coffer = client.getVarbitValue(Varbits.KINGDOM_COFFER);
+			final int approval = client.getVarbitValue(Varbits.KINGDOM_APPROVAL);
 
-		processInfobox();
+			if (isThroneOfMiscellaniaCompleted()
+				&& (isInKingdom() || coffer > 0 && approval > 0)
+				&& (getCoffer() != coffer || getApproval() != approval))
+			{
+				setLastChanged(Instant.now());
+				setCoffer(coffer);
+				setApproval(approval);
+			}
+		}
+		else if (event.getVarpId() == VarPlayer.THRONE_OF_MISCELLANIA)
+		{
+			processInfobox();
+		}
 	}
 
 	@Subscribe
@@ -210,7 +215,7 @@ public class KingdomPlugin extends Plugin
 
 	private int estimateCoffer(Instant lastChanged, int lastCoffer)
 	{
-		int daysSince = (int) Duration.between(lastChanged, Instant.now()).toDays();
+		int daysSince = getNumbersOfDaysPassed(lastChanged);
 		int maxDailyWithdrawal = isRoyalTroubleCompleted() ? MAX_WITHDRAWAL_ROYAL_TROUBLE : MAX_WITHDRAWAL_BASE;
 		int maxDailyThreshold = maxDailyWithdrawal * 10;
 
@@ -223,11 +228,18 @@ public class KingdomPlugin extends Plugin
 
 	private int estimateApproval(Instant lastChanged, int lastApproval)
 	{
-		int daysSince = (int) Duration.between(lastChanged, Instant.now()).toDays();
+		int daysSince = getNumbersOfDaysPassed(lastChanged);
 		float dailyPercentage = isRoyalTroubleCompleted() ? APPROVAL_DECREMENT_ROYAL_TROUBLE : APPROVAL_DECREMENT_BASE;
 
 		lastApproval -= (int) (daysSince * dailyPercentage * MAX_APPROVAL);
 		return Math.max(lastApproval, 0);
+	}
+
+	private static int getNumbersOfDaysPassed(Instant lastChanged)
+	{
+		lastChanged = lastChanged.truncatedTo(ChronoUnit.DAYS);
+		var now = Instant.now().truncatedTo(ChronoUnit.DAYS);
+		return (int) Duration.between(lastChanged, now).toDays();
 	}
 
 	private boolean isInKingdom()
@@ -238,7 +250,7 @@ public class KingdomPlugin extends Plugin
 
 	private boolean isThroneOfMiscellaniaCompleted()
 	{
-		return client.getVar(VarPlayer.THRONE_OF_MISCELLANIA) > 0;
+		return client.getVarpValue(VarPlayer.THRONE_OF_MISCELLANIA) > 0;
 	}
 
 	private boolean isRoyalTroubleCompleted()

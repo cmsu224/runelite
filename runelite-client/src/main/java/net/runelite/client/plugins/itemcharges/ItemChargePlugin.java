@@ -40,19 +40,21 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.EquipmentInventorySlot;
+import net.runelite.api.GameState;
 import net.runelite.api.InventoryID;
 import net.runelite.api.Item;
 import net.runelite.api.ItemContainer;
 import net.runelite.api.ItemID;
 import net.runelite.api.Varbits;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.ScriptCallbackEvent;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.events.WidgetLoaded;
+import net.runelite.api.widgets.ComponentID;
+import net.runelite.api.widgets.InterfaceID;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetID;
-import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.Notifier;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -117,14 +119,14 @@ public class ItemChargePlugin extends Plugin
 	private static final String CHRONICLE_EMPTY_TEXT = "Your book has run out of charges.";
 	private static final String CHRONICLE_NO_CHARGES_TEXT = "Your book does not have any charges. Purchase some Teleport Cards from Diango.";
 	private static final Pattern BRACELET_OF_SLAUGHTER_ACTIVATE_PATTERN = Pattern.compile(
-		"Your bracelet of slaughter prevents your slayer count from decreasing. (?:(?:It has (\\d{1,2}) charges? left)|(It then crumbles to dust))\\."
+		"Your bracelet of slaughter prevents your slayer count from decreasing. (?:It has (\\d{1,2}) charges? left\\.|It then crumbles to dust\\.|It then regenerates itself to full charge!)"
 	);
 	private static final Pattern BRACELET_OF_SLAUGHTER_CHECK_PATTERN = Pattern.compile(
 		"Your bracelet of slaughter has (\\d{1,2}) charges? left\\."
 	);
 	private static final String BRACELET_OF_SLAUGHTER_BREAK_TEXT = "Your Bracelet of Slaughter has crumbled to dust.";
 	private static final Pattern EXPEDITIOUS_BRACELET_ACTIVATE_PATTERN = Pattern.compile(
-		"Your expeditious bracelet helps you progress your slayer (?:task )?faster. (?:(?:It has (\\d{1,2}) charges? left)|(It then crumbles to dust))\\."
+		"Your expeditious bracelet helps you progress your slayer (?:task )?faster. (?:It has (\\d{1,2}) charges? left\\.|It then crumbles to dust\\.|It then regenerates itself to full charge!)"
 	);
 	private static final Pattern EXPEDITIOUS_BRACELET_CHECK_PATTERN = Pattern.compile(
 		"Your expeditious bracelet has (\\d{1,2}) charges? left\\."
@@ -153,8 +155,6 @@ public class ItemChargePlugin extends Plugin
 	private static final int MAX_SLAYER_BRACELET_CHARGES = 30;
 	private static final int MAX_BLOOD_ESSENCE_CHARGES = 1000;
 	private static final int MAX_BRACELET_OF_CLAY_CHARGES = 28;
-
-	private int lastExplorerRingCharge = -1;
 
 	@Inject
 	private Client client;
@@ -186,6 +186,7 @@ public class ItemChargePlugin extends Plugin
 	// Limits destroy callback to once per tick
 	private int lastCheckTick;
 	private final Map<EquipmentInventorySlot, ItemChargeInfobox> infoboxes = new EnumMap<>(EquipmentInventorySlot.class);
+	private boolean loginFlag;
 
 	@Provides
 	ItemChargeConfig getConfig(ConfigManager configManager)
@@ -197,6 +198,10 @@ public class ItemChargePlugin extends Plugin
 	protected void startUp()
 	{
 		overlayManager.add(overlay);
+		if (client.getGameState() == GameState.LOGGED_IN)
+		{
+			clientThread.invokeLater(() -> updateExplorerRingCharges(client.getVarbitValue(Varbits.EXPLORER_RING_ALCHS)));
+		}
 	}
 
 	@Override
@@ -206,6 +211,26 @@ public class ItemChargePlugin extends Plugin
 		infoBoxManager.removeIf(ItemChargeInfobox.class::isInstance);
 		infoboxes.clear();
 		lastCheckTick = -1;
+	}
+
+	@Subscribe
+	public void onGameStateChanged(GameStateChanged e)
+	{
+		// No VarbitChanged event fires on login if the explorer's ring is full (varbit value 0).
+		// So, set the value to 0 when LOGGED_IN. This is before the VarbitChanged event would fire,
+		// so if it shouldn't be 0 it will be updated later.
+		switch (e.getGameState())
+		{
+			case LOGGING_IN:
+				loginFlag = true;
+				break;
+			case LOGGED_IN:
+				if (loginFlag)
+				{
+					loginFlag = false;
+					updateExplorerRingCharges(0);
+				}
+		}
 	}
 
 	@Subscribe
@@ -364,7 +389,8 @@ public class ItemChargePlugin extends Plugin
 					notifier.notify("Your ring of forging has melted.");
 				}
 
-				updateRingOfForgingCharges(MAX_RING_OF_FORGING_CHARGES);
+				// This chat message triggers before the used message so add 1 to the max charges to ensure proper sync
+				updateRingOfForgingCharges(MAX_RING_OF_FORGING_CHARGES + 1);
 			}
 			else if (chronicleAddMatcher.find())
 			{
@@ -458,8 +484,18 @@ public class ItemChargePlugin extends Plugin
 				// Determine if the player mined with a Bracelet of Clay equipped.
 				if (equipment != null && equipment.contains(ItemID.BRACELET_OF_CLAY))
 				{
-					int charges = Ints.constrainToRange(getItemCharges(ItemChargeConfig.KEY_BRACELET_OF_CLAY) - 1, 0, MAX_BRACELET_OF_CLAY_CHARGES);
-					updateBraceletOfClayCharges(charges);
+					final ItemContainer inventory = client.getItemContainer(InventoryID.INVENTORY);
+
+					// Charge is not used if only 1 inventory slot is available when mining in Prifddinas
+					boolean ignore = inventory != null
+						&& inventory.count() == 27
+						&& message.equals(BRACELET_OF_CLAY_USE_TEXT_TRAHAEARN);
+
+					if (!ignore)
+					{
+						int charges = Ints.constrainToRange(getItemCharges(ItemChargeConfig.KEY_BRACELET_OF_CLAY) - 1, 0, MAX_BRACELET_OF_CLAY_CHARGES);
+						updateBraceletOfClayCharges(charges);
+					}
 				}
 			}
 			else if (message.equals(BRACELET_OF_CLAY_BREAK_TEXT))
@@ -502,22 +538,20 @@ public class ItemChargePlugin extends Plugin
 	@Subscribe
 	private void onVarbitChanged(VarbitChanged event)
 	{
-		int explorerRingCharge = client.getVarbitValue(Varbits.EXPLORER_RING_ALCHS);
-		if (lastExplorerRingCharge != explorerRingCharge)
+		if (event.getVarbitId() == Varbits.EXPLORER_RING_ALCHS)
 		{
-			lastExplorerRingCharge = explorerRingCharge;
-			updateExplorerRingCharges(explorerRingCharge);
+			updateExplorerRingCharges(event.getValue());
 		}
 	}
 
 	@Subscribe
 	public void onWidgetLoaded(WidgetLoaded widgetLoaded)
 	{
-		if (widgetLoaded.getGroupId() == WidgetID.DIALOG_SPRITE_GROUP_ID)
+		if (widgetLoaded.getGroupId() == InterfaceID.DIALOG_SPRITE)
 		{
 			clientThread.invokeLater(() ->
 			{
-				Widget sprite = client.getWidget(WidgetInfo.DIALOG_SPRITE_SPRITE);
+				Widget sprite = client.getWidget(ComponentID.DIALOG_SPRITE_SPRITE);
 				if (sprite != null)
 				{
 					switch (sprite.getItemId())
@@ -618,7 +652,7 @@ public class ItemChargePlugin extends Plugin
 		}
 		lastCheckTick = currentTick;
 
-		final Widget widgetDestroyItemName = client.getWidget(WidgetInfo.DESTROY_ITEM_NAME);
+		final Widget widgetDestroyItemName = client.getWidget(ComponentID.DESTROY_ITEM_NAME);
 		if (widgetDestroyItemName == null)
 		{
 			return;

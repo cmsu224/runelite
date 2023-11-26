@@ -27,7 +27,6 @@ package net.runelite.client.party;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.google.protobuf.InvalidProtocolBufferException;
-import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -165,6 +164,7 @@ public class WSClient extends WebSocketListener implements AutoCloseable
 		log.debug("Sending: {}", message);
 		final String json = gson.toJson(message, WebsocketMessage.class);
 		final Party.Data data = Party.Data.newBuilder()
+			.setType(message.getClass().getSimpleName())
 			.setData(com.google.protobuf.ByteString.copyFromUtf8(json))
 			.build();
 		final Party.C2S c2s = Party.C2S.newBuilder()
@@ -233,7 +233,7 @@ public class WSClient extends WebSocketListener implements AutoCloseable
 
 				try
 				{
-					message = gson.fromJson(new InputStreamReader(data.getData().newInput()), WebsocketMessage.class);
+					message = gson.fromJson(data.getData().toStringUtf8(), WebsocketMessage.class);
 				}
 				catch (JsonParseException e)
 				{

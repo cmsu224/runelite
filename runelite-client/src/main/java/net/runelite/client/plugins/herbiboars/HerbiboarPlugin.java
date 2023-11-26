@@ -48,11 +48,9 @@ import static net.runelite.api.ObjectID.ROCK_30522;
 import net.runelite.api.TileObject;
 import net.runelite.api.Varbits;
 import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.events.GameObjectChanged;
 import net.runelite.api.events.GameObjectDespawned;
 import net.runelite.api.events.GameObjectSpawned;
 import net.runelite.api.events.GameStateChanged;
-import net.runelite.api.events.GroundObjectChanged;
 import net.runelite.api.events.GroundObjectDespawned;
 import net.runelite.api.events.GroundObjectSpawned;
 import net.runelite.api.events.MenuOptionClicked;
@@ -150,7 +148,6 @@ public class HerbiboarPlugin extends Plugin
 	private boolean started;
 	private WorldPoint startPoint;
 	private HerbiboarStart startSpot;
-	private boolean ruleApplicable;
 
 	@Provides
 	HerbiboarConfig provideConfig(ConfigManager configManager)
@@ -234,8 +231,6 @@ public class HerbiboarPlugin extends Plugin
 			startSpot = HerbiboarStart.from(startPoint);
 		}
 
-		ruleApplicable = HerbiboarRule.canApplyRule(startSpot, currentPath);
-
 		if (finished)
 		{
 			resetTrailData();
@@ -270,7 +265,6 @@ public class HerbiboarPlugin extends Plugin
 		started = false;
 		startPoint = null;
 		startSpot = null;
-		ruleApplicable = false;
 	}
 
 	private void clearCache()
@@ -312,12 +306,6 @@ public class HerbiboarPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onGameObjectChanged(GameObjectChanged event)
-	{
-		onTileObject(event.getPrevious(), event.getGameObject());
-	}
-
-	@Subscribe
 	public void onGameObjectDespawned(GameObjectDespawned event)
 	{
 		onTileObject(event.getGameObject(), null);
@@ -327,12 +315,6 @@ public class HerbiboarPlugin extends Plugin
 	public void onGroundObjectSpawned(GroundObjectSpawned event)
 	{
 		onTileObject(null, event.getGroundObject());
-	}
-
-	@Subscribe
-	public void onGroundObjectChanged(GroundObjectChanged event)
-	{
-		onTileObject(event.getPrevious(), event.getGroundObject());
 	}
 
 	@Subscribe

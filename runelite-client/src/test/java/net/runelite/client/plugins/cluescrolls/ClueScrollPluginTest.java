@@ -34,6 +34,8 @@ import java.util.Arrays;
 import java.util.List;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
+import net.runelite.api.EnumComposition;
+import net.runelite.api.EnumID;
 import net.runelite.api.InventoryID;
 import net.runelite.api.Item;
 import net.runelite.api.ItemContainer;
@@ -41,6 +43,7 @@ import net.runelite.api.ItemID;
 import net.runelite.api.NPC;
 import net.runelite.api.NullObjectID;
 import net.runelite.api.Player;
+import net.runelite.api.Scene;
 import net.runelite.api.Varbits;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ChatMessage;
@@ -48,11 +51,13 @@ import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.events.WidgetLoaded;
+import net.runelite.api.widgets.ComponentID;
+import net.runelite.api.widgets.InterfaceID;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetID;
-import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.callback.ClientThread;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.game.chatbox.ChatboxPanelManager;
 import net.runelite.client.plugins.banktags.TagManager;
 import net.runelite.client.plugins.cluescrolls.clues.hotcold.HotColdLocation;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -84,6 +89,10 @@ public class ClueScrollPluginTest
 
 	@Mock
 	@Bind
+	Scene scene;
+
+	@Mock
+	@Bind
 	ClientThread clientThread;
 
 	@Inject
@@ -109,6 +118,14 @@ public class ClueScrollPluginTest
 	@Bind
 	TagManager tagManager;
 
+	@Mock
+	@Bind
+	ConfigManager configManager;
+
+	@Mock
+	@Bind
+	ChatboxPanelManager chatboxPanelManager;
+
 	@Before
 	public void before()
 	{
@@ -124,7 +141,7 @@ public class ClueScrollPluginTest
 		hotColdMessage.setType(ChatMessageType.GAMEMESSAGE);
 		final Player localPlayer = mock(Player.class);
 
-		when(client.getWidget(WidgetInfo.CLUE_SCROLL_TEXT)).thenReturn(clueWidget);
+		when(client.getWidget(ComponentID.CLUESCROLL_TEXT)).thenReturn(clueWidget);
 		when(client.getLocalPlayer()).thenReturn(localPlayer);
 		when(client.getPlane()).thenReturn(0);
 		when(client.getCachedNPCs()).thenReturn(new NPC[] {});
@@ -136,7 +153,7 @@ public class ClueScrollPluginTest
 
 		// Initialize a beginner hot-cold clue (which will have an end point of LUMBRIDGE_COW_FIELD)
 		WidgetLoaded widgetLoaded = new WidgetLoaded();
-		widgetLoaded.setGroupId(WidgetID.CLUE_SCROLL_GROUP_ID);
+		widgetLoaded.setGroupId(InterfaceID.CLUESCROLL);
 		plugin.onWidgetLoaded(widgetLoaded);
 
 		// clientthread callback
@@ -178,11 +195,11 @@ public class ClueScrollPluginTest
 		// Set up emote clue
 		final Widget clueWidget = mock(Widget.class);
 		when(clueWidget.getText()).thenReturn("Spin in the Varrock Castle courtyard. Equip a black axe, a coif and a ruby ring.");
-		when(client.getWidget(WidgetInfo.CLUE_SCROLL_TEXT)).thenReturn(clueWidget);
+		when(client.getWidget(ComponentID.CLUESCROLL_TEXT)).thenReturn(clueWidget);
 
 		// open clue
 		WidgetLoaded widgetLoaded = new WidgetLoaded();
-		widgetLoaded.setGroupId(WidgetID.CLUE_SCROLL_GROUP_ID);
+		widgetLoaded.setGroupId(InterfaceID.CLUESCROLL);
 		plugin.onWidgetLoaded(widgetLoaded);
 
 		// clientthread callback
@@ -209,7 +226,7 @@ public class ClueScrollPluginTest
 
 		// open clue
 		reset(clientThread);
-		widgetLoaded.setGroupId(WidgetID.CLUE_SCROLL_GROUP_ID);
+		widgetLoaded.setGroupId(InterfaceID.CLUESCROLL);
 		plugin.onWidgetLoaded(widgetLoaded);
 
 		// clientthread callback
@@ -257,6 +274,11 @@ public class ClueScrollPluginTest
 		when(client.getVarbitValue(Varbits.RUNE_POUCH_AMOUNT1)).thenReturn(20);
 		when(client.getVarbitValue(Varbits.RUNE_POUCH_RUNE3)).thenReturn(4); // Fire Rune
 		when(client.getVarbitValue(Varbits.RUNE_POUCH_AMOUNT3)).thenReturn(4000);
+
+		EnumComposition enumComposition = mock(EnumComposition.class);
+		when(enumComposition.getIntValue(9)).thenReturn(ItemID.COSMIC_RUNE);
+		when(enumComposition.getIntValue(4)).thenReturn(ItemID.FIRE_RUNE);
+		when(client.getEnum(EnumID.RUNEPOUCH_RUNE)).thenReturn(enumComposition);
 
 		plugin.onItemContainerChanged(event);
 

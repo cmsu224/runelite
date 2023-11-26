@@ -69,7 +69,7 @@ import net.runelite.api.events.ItemQuantityChanged;
 import net.runelite.api.events.ItemSpawned;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.MenuOptionClicked;
-import net.runelite.api.widgets.WidgetInfo;
+import net.runelite.api.widgets.ComponentID;
 import net.runelite.client.Notifier;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -108,9 +108,6 @@ public class GroundItemsPlugin extends Plugin
 		private final Color color;
 	}
 
-	// The game won't send anything higher than this value to the plugin -
-	// so we replace any item quantity higher with "Lots" instead.
-	static final int MAX_QUANTITY = 65535;
 	// ItemID for coins
 	private static final int COINS = ItemID.COINS_995;
 
@@ -655,18 +652,11 @@ public class GroundItemsPlugin extends Plugin
 
 		if (item.getQuantity() > 1)
 		{
-			if (item.getQuantity() >= MAX_QUANTITY)
-			{
-				notificationStringBuilder.append(" (Lots!)");
-			}
-			else
-			{
-				notificationStringBuilder.append(" (")
-					.append(QuantityFormatter.quantityToStackSize(item.getQuantity()))
-					.append(')');
-			}
+			notificationStringBuilder.append(" (")
+				.append(QuantityFormatter.quantityToStackSize(item.getQuantity()))
+				.append(')');
 		}
-		
+
 		notifier.notify(notificationStringBuilder.toString());
 	}
 
@@ -693,7 +683,9 @@ public class GroundItemsPlugin extends Plugin
 			// item spawns that are drops
 			droppedItemQueue.add(itemId);
 		}
-		else if (menuOptionClicked.getMenuAction() == MenuAction.WIDGET_TARGET_ON_GAME_OBJECT && client.getSelectedWidget().getId() == WidgetInfo.INVENTORY.getId())
+		else if (menuOptionClicked.getMenuAction() == MenuAction.WIDGET_TARGET_ON_GAME_OBJECT
+			&& client.getSelectedWidget() != null
+			&& client.getSelectedWidget().getId() == ComponentID.INVENTORY_CONTAINER)
 		{
 			lastUsedItem = client.getSelectedWidget().getItemId();
 		}

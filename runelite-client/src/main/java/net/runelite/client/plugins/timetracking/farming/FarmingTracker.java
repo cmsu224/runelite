@@ -25,7 +25,6 @@
 package net.runelite.client.plugins.timetracking.farming;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import java.time.Instant;
 import java.util.Collection;
@@ -36,6 +35,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
@@ -55,6 +57,10 @@ import net.runelite.client.util.Text;
 
 @Slf4j
 @Singleton
+@RequiredArgsConstructor(
+	access = AccessLevel.PRIVATE,
+	onConstructor = @__({@Inject})
+)
 public class FarmingTracker
 {
 	private final Client client;
@@ -64,6 +70,7 @@ public class FarmingTracker
 	private final FarmingWorld farmingWorld;
 	private final Notifier notifier;
 	private final CompostTracker compostTracker;
+	private final PaymentTracker paymentTracker;
 
 	private final Map<Tab, SummaryState> summaries = new EnumMap<>(Tab.class);
 
@@ -78,21 +85,9 @@ public class FarmingTracker
 	private Collection<FarmingRegion> lastRegions;
 	private boolean firstNotifyCheck = true;
 
-	@Inject
-	private FarmingTracker(Client client, ItemManager itemManager, ConfigManager configManager, TimeTrackingConfig config, FarmingWorld farmingWorld, Notifier notifier, CompostTracker compostTracker)
-	{
-		this.client = client;
-		this.itemManager = itemManager;
-		this.configManager = configManager;
-		this.config = config;
-		this.farmingWorld = farmingWorld;
-		this.notifier = notifier;
-		this.compostTracker = compostTracker;
-	}
-
 	public FarmingTabPanel createTabPanel(Tab tab, FarmingContractManager farmingContractManager)
 	{
-		return new FarmingTabPanel(this, compostTracker, itemManager, configManager, config, farmingWorld.getTabs().get(tab), farmingContractManager);
+		return new FarmingTabPanel(this, compostTracker, paymentTracker, itemManager, configManager, config, farmingWorld.getTabs().get(tab), farmingContractManager);
 	}
 
 	/**
@@ -116,15 +111,6 @@ public class FarmingTracker
 			if (!autoweed.equals(configManager.getRSProfileConfiguration(TimeTrackingConfig.CONFIG_GROUP, TimeTrackingConfig.AUTOWEED)))
 			{
 				configManager.setRSProfileConfiguration(TimeTrackingConfig.CONFIG_GROUP, TimeTrackingConfig.AUTOWEED, autoweed);
-				changed = true;
-			}
-		}
-
-		{
-			boolean botanist = client.getVarbitValue(Varbits.LEAGUE_RELIC_5) == 1;
-			if (!Boolean.valueOf(botanist).equals(configManager.getRSProfileConfiguration(TimeTrackingConfig.CONFIG_GROUP, TimeTrackingConfig.BOTANIST, Boolean.class)))
-			{
-				configManager.setRSProfileConfiguration(TimeTrackingConfig.CONFIG_GROUP, TimeTrackingConfig.BOTANIST, botanist);
 				changed = true;
 			}
 		}
@@ -224,9 +210,12 @@ public class FarmingTracker
 					}
 				}
 
-				if (currentPatchState.getCropState() == CropState.DEAD || currentPatchState.getCropState() == CropState.HARVESTABLE)
+				if (currentPatchState.getCropState() == CropState.DEAD ||
+					currentPatchState.getCropState() == CropState.HARVESTABLE ||
+					currentPatchState.getCropState() == CropState.EMPTY)
 				{
 					compostTracker.setCompostState(patch, null);
+					paymentTracker.setProtectedState(patch, false);
 				}
 
 				String value = strVarbit + ":" + unixNow;
@@ -302,9 +291,6 @@ public class FarmingTracker
 		boolean autoweed = Integer.toString(Autoweed.ON.ordinal())
 			.equals(configManager.getConfiguration(TimeTrackingConfig.CONFIG_GROUP, profile, TimeTrackingConfig.AUTOWEED));
 
-		boolean botanist = Boolean.TRUE
-			.equals(configManager.getConfiguration(TimeTrackingConfig.CONFIG_GROUP, profile, TimeTrackingConfig.BOTANIST, Boolean.class));
-
 		String key = patch.configKey();
 		String storedValue = configManager.getConfiguration(TimeTrackingConfig.CONFIG_GROUP, profile, key);
 
@@ -351,11 +337,6 @@ public class FarmingTracker
 			stage = 0;
 			stages = 1;
 			tickrate = 0;
-		}
-
-		if (botanist)
-		{
-			tickrate /= 5;
 		}
 
 		long doneEstimate = 0;

@@ -39,6 +39,7 @@ import java.util.function.Function;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.Setter;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.DynamicGridLayout;
@@ -56,6 +57,9 @@ class WorldSwitcherPanel extends PluginPanel
 
 	private final JPanel listContainer = new JPanel();
 
+	@Getter(AccessLevel.PACKAGE)
+	private boolean active;
+
 	private WorldTableHeader worldHeader;
 	private WorldTableHeader playersHeader;
 	private WorldTableHeader activityHeader;
@@ -70,6 +74,8 @@ class WorldSwitcherPanel extends PluginPanel
 	private SubscriptionFilterMode subscriptionFilterMode;
 	@Setter(AccessLevel.PACKAGE)
 	private Set<RegionFilterMode> regionFilterMode;
+	@Setter(AccessLevel.PACKAGE)
+	private Set<WorldTypeFilter> worldTypeFilters;
 
 	WorldSwitcherPanel(WorldHopperPlugin plugin)
 	{
@@ -84,6 +90,19 @@ class WorldSwitcherPanel extends PluginPanel
 
 		add(headerContainer);
 		add(listContainer);
+	}
+
+	@Override
+	public void onActivate()
+	{
+		active = true;
+		updateList();
+	}
+
+	@Override
+	public void onDeactivate()
+	{
+		active = false;
 	}
 
 	void switchCurrentHighlight(int newWorld, int lastWorld)
@@ -253,6 +272,19 @@ class WorldSwitcherPanel extends PluginPanel
 			if (!regionFilterMode.isEmpty() && !regionFilterMode.contains(RegionFilterMode.of(world.getRegion())))
 			{
 				continue;
+			}
+
+			if (!worldTypeFilters.isEmpty())
+			{
+				boolean matches = false;
+				for (WorldTypeFilter worldTypeFilter : worldTypeFilters)
+				{
+					matches |= worldTypeFilter.matches(world.getTypes());
+				}
+				if (!matches)
+				{
+					continue;
+				}
 			}
 
 			rows.add(buildRow(world, i % 2 == 0, world.getId() == plugin.getCurrentWorld() && plugin.getLastWorld() != 0, plugin.isFavorite(world)));

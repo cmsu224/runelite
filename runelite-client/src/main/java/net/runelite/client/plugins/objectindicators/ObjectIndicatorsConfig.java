@@ -67,12 +67,36 @@ public interface ObjectIndicatorsConfig extends Config
 		return false;
 	}
 
-	@Alpha
 	@ConfigItem(
 		position = 2,
+		keyName = "highlightClickbox",
+		name = "Highlight clickbox",
+		description = "Configures whether the object's clickbox should be highlighted",
+		section = renderStyleSection
+	)
+	default boolean highlightClickbox()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		position = 3,
+		keyName = "highlightTile",
+		name = "Highlight tile",
+		description = "Configures whether the object's tile should be highlighted",
+		section = renderStyleSection
+	)
+	default boolean highlightTile()
+	{
+		return false;
+	}
+
+	@Alpha
+	@ConfigItem(
+		position = 4,
 		keyName = "markerColor",
 		name = "Marker color",
-		description = "Configures the color of object marker",
+		description = "Configures the color of newly created object markers",
 		section = renderStyleSection
 	)
 	default Color markerColor()
@@ -80,8 +104,18 @@ public interface ObjectIndicatorsConfig extends Config
 		return Color.YELLOW;
 	}
 
+	@Alpha
 	@ConfigItem(
-		position = 3,
+		position = 5,
+		keyName = "fillColor",
+		name = "Fill color",
+		description = "Configures the fill color of newly created object markers",
+		section = renderStyleSection
+	)
+	Color fillColor();
+
+	@ConfigItem(
+		position = 6,
 		keyName = "borderWidth",
 		name = "Border Width",
 		description = "Width of the marked object border",
@@ -93,7 +127,7 @@ public interface ObjectIndicatorsConfig extends Config
 	}
 
 	@ConfigItem(
-		position = 4,
+		position = 7,
 		keyName = "outlineFeather",
 		name = "Outline feather",
 		description = "Specify between 0-4 how much of the model outline should be faded",
@@ -106,16 +140,5 @@ public interface ObjectIndicatorsConfig extends Config
 	default int outlineFeather()
 	{
 		return 0;
-	}
-
-	@ConfigItem(
-		position = 5,
-		keyName = "rememberObjectColors",
-		name = "Remember color per object",
-		description = "Color objects using the color from time of marking"
-	)
-	default boolean rememberObjectColors()
-	{
-		return false;
 	}
 }

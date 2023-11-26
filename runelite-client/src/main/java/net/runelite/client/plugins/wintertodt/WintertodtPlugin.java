@@ -39,6 +39,16 @@ import static net.runelite.api.AnimationID.FIREMAKING;
 import static net.runelite.api.AnimationID.FLETCHING_BOW_CUTTING;
 import static net.runelite.api.AnimationID.IDLE;
 import static net.runelite.api.AnimationID.LOOKING_INTO;
+import static net.runelite.api.AnimationID.WOODCUTTING_2H_3A;
+import static net.runelite.api.AnimationID.WOODCUTTING_2H_ADAMANT;
+import static net.runelite.api.AnimationID.WOODCUTTING_2H_BLACK;
+import static net.runelite.api.AnimationID.WOODCUTTING_2H_BRONZE;
+import static net.runelite.api.AnimationID.WOODCUTTING_2H_CRYSTAL;
+import static net.runelite.api.AnimationID.WOODCUTTING_2H_DRAGON;
+import static net.runelite.api.AnimationID.WOODCUTTING_2H_IRON;
+import static net.runelite.api.AnimationID.WOODCUTTING_2H_MITHRIL;
+import static net.runelite.api.AnimationID.WOODCUTTING_2H_RUNE;
+import static net.runelite.api.AnimationID.WOODCUTTING_2H_STEEL;
 import static net.runelite.api.AnimationID.WOODCUTTING_3A_AXE;
 import static net.runelite.api.AnimationID.WOODCUTTING_ADAMANT;
 import static net.runelite.api.AnimationID.WOODCUTTING_BLACK;
@@ -121,6 +131,7 @@ public class WintertodtPlugin extends Plugin
 
 	@Getter(AccessLevel.PACKAGE)
 	private boolean isInWintertodt;
+	private boolean needRoundNotif;
 
 	private Instant lastActionTime;
 
@@ -175,9 +186,9 @@ public class WintertodtPlugin extends Plugin
 			{
 				log.debug("Left Wintertodt!");
 				reset();
+				isInWintertodt = false;
+				needRoundNotif = true;
 			}
-
-			isInWintertodt = false;
 			return;
 		}
 
@@ -185,8 +196,8 @@ public class WintertodtPlugin extends Plugin
 		{
 			reset();
 			log.debug("Entered Wintertodt!");
+			isInWintertodt = true;
 		}
-		isInWintertodt = true;
 
 		checkActionTimeout();
 	}
@@ -194,13 +205,14 @@ public class WintertodtPlugin extends Plugin
 	@Subscribe
 	public void onVarbitChanged(VarbitChanged varbitChanged)
 	{
-		int timerValue = client.getVarbitValue(Varbits.WINTERTODT_TIMER);
-		if (timerValue != previousTimerValue)
+		if (varbitChanged.getVarbitId() == Varbits.WINTERTODT_TIMER)
 		{
 			int timeToNotify = config.roundNotification();
-			if (timeToNotify > 0)
+			// Sometimes wt var updates are sent to players even after leaving wt.
+			// So only notify if in wt or after just having left.
+			if (timeToNotify > 0 && (isInWintertodt || needRoundNotif))
 			{
-				int timeInSeconds = timerValue * 30 / 50;
+				int timeInSeconds = varbitChanged.getValue() * 30 / 50;
 				int prevTimeInSeconds = previousTimerValue * 30 / 50;
 
 				log.debug("Seconds left until round start: {}", timeInSeconds);
@@ -208,10 +220,11 @@ public class WintertodtPlugin extends Plugin
 				if (prevTimeInSeconds > timeToNotify && timeInSeconds <= timeToNotify)
 				{
 					notifier.notify("Wintertodt round is about to start");
+					needRoundNotif = false;
 				}
 			}
 
-			previousTimerValue = timerValue;
+			previousTimerValue = varbitChanged.getValue();
 		}
 	}
 
@@ -422,6 +435,16 @@ public class WintertodtPlugin extends Plugin
 			case WOODCUTTING_3A_AXE:
 			case WOODCUTTING_CRYSTAL:
 			case WOODCUTTING_TRAILBLAZER:
+			case WOODCUTTING_2H_BRONZE:
+			case WOODCUTTING_2H_IRON:
+			case WOODCUTTING_2H_STEEL:
+			case WOODCUTTING_2H_BLACK:
+			case WOODCUTTING_2H_MITHRIL:
+			case WOODCUTTING_2H_ADAMANT:
+			case WOODCUTTING_2H_RUNE:
+			case WOODCUTTING_2H_DRAGON:
+			case WOODCUTTING_2H_CRYSTAL:
+			case WOODCUTTING_2H_3A:
 				setActivity(WintertodtActivity.WOODCUTTING);
 				break;
 

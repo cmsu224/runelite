@@ -37,9 +37,9 @@ import net.runelite.api.Client;
 import net.runelite.api.FontTypeFace;
 import net.runelite.api.ScriptID;
 import net.runelite.api.events.WidgetLoaded;
+import net.runelite.api.widgets.ComponentID;
+import net.runelite.api.widgets.InterfaceID;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetID;
-import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -78,11 +78,11 @@ public class DiaryRequirementsPlugin extends Plugin
 	@Subscribe
 	public void onWidgetLoaded(final WidgetLoaded event)
 	{
-		if (event.getGroupId() == WidgetID.DIARY_QUEST_GROUP_ID)
+		if (event.getGroupId() == InterfaceID.ACHIEVEMENT_DIARY_SCROLL)
 		{
 			String widgetTitle = Text.removeTags(
 				client.getWidget(
-					WidgetInfo.DIARY_QUEST_WIDGET_TITLE)
+					ComponentID.ACHIEVEMENT_DIARY_SCROLL_TITLE)
 					.getText())
 				.replace(' ', '_')
 				.toUpperCase();
@@ -95,7 +95,7 @@ public class DiaryRequirementsPlugin extends Plugin
 
 	private void showDiaryRequirements()
 	{
-		Widget widget = client.getWidget(WidgetInfo.DIARY_QUEST_WIDGET_TEXT);
+		Widget widget = client.getWidget(ComponentID.ACHIEVEMENT_DIARY_SCROLL_TEXT);
 		Widget[] children = widget.getStaticChildren();
 
 		Widget titleWidget = children[0];
@@ -199,7 +199,7 @@ public class DiaryRequirementsPlugin extends Plugin
 		}
 
 		int numLines = lastLine;
-		clientThread.invokeLater(() -> client.runScript(ScriptID.DIARY_QUEST_UPDATE_LINECOUNT, 1, numLines));
+		clientThread.invokeLater(() -> client.runScript(ScriptID.DIARY_UPDATE_LINECOUNT, 1, numLines));
 	}
 
 	private List<String> getOriginalAchievements(Widget[] children)

@@ -38,8 +38,8 @@ import net.runelite.api.Client;
 import net.runelite.api.Constants;
 import net.runelite.api.Point;
 import net.runelite.api.Skill;
+import net.runelite.api.widgets.ComponentID;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
@@ -50,10 +50,7 @@ import net.runelite.client.util.ColorUtil;
 class PrayerDoseOverlay extends Overlay
 {
 	private static final float PULSE_TIME = 2f * Constants.GAME_TICK_LENGTH;
-
-	private static final Color START_COLOR = new Color(0, 255, 255);
-	private static final Color END_COLOR = new Color(0, 92, 92);
-
+	private static final double DARKEN_FACTOR = 0.36078;
 	private final Client client;
 	private final PrayerPlugin plugin;
 	private final PrayerConfig config;
@@ -92,7 +89,7 @@ class PrayerDoseOverlay extends Overlay
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
-		final Widget xpOrb = client.getWidget(WidgetInfo.MINIMAP_QUICK_PRAYER_ORB);
+		final Widget xpOrb = client.getWidget(ComponentID.MINIMAP_QUICK_PRAYER_ORB);
 		if (xpOrb == null || xpOrb.isHidden())
 		{
 			return null;
@@ -148,10 +145,22 @@ class PrayerDoseOverlay extends Overlay
 		final float tickProgress = Math.min(timeSinceLastTick / PULSE_TIME, 1); // Cap between 0 and 1
 		final double t = tickProgress * Math.PI; // Convert to 0 - pi
 
-		graphics.setColor(ColorUtil.colorLerp(START_COLOR, END_COLOR, Math.sin(t)));
+		Color startColor = config.prayerDoseOrbStartColor();
+		graphics.setColor(ColorUtil.colorLerp(
+			startColor,
+			endColor(startColor),
+			Math.sin(t)));
+
 		graphics.setStroke(new BasicStroke(2));
 		graphics.drawOval(orbInnerX, orbInnerY, orbInnerSize, orbInnerSize);
 		return null;
 	}
 
+	private static Color endColor(Color start)
+	{
+		return new Color(Math.max((int) (start.getRed() * DARKEN_FACTOR), 0),
+			Math.max((int) (start.getGreen() * DARKEN_FACTOR), 0),
+			Math.max((int) (start.getBlue() * DARKEN_FACTOR), 0),
+			start.getAlpha());
+	}
 }

@@ -48,7 +48,7 @@ enum TeleportLocationData
 	KHARYRLL(TeleportType.ANCIENT_MAGICKS, "Kharyrll", 66, new WorldPoint(3494, 3473, 0), "kharyrll_teleport_icon.png"),
 	LASSAR(TeleportType.ANCIENT_MAGICKS, "Lassar", 72, new WorldPoint(3002, 3472, 0), "lassar_teleport_icon.png"),
 	DAREEYAK(TeleportType.ANCIENT_MAGICKS, "Dareeyak", 78, new WorldPoint(2969, 3695, 0), "dareeyak_teleport_icon.png"),
-	CARRALLANGAR(TeleportType.ANCIENT_MAGICKS, "Carrallangar", 84, new WorldPoint(3157, 3667, 0), "carrallangar_teleport_icon.png"),
+	CARRALLANGER(TeleportType.ANCIENT_MAGICKS, "Carrallanger", 84, new WorldPoint(3157, 3667, 0), "carrallanger_teleport_icon.png"),
 	ANNAKARL(TeleportType.ANCIENT_MAGICKS, "Annakarl", 90, new WorldPoint(3288, 3888, 0), "annakarl_teleport_icon.png"),
 	GHORROCK(TeleportType.ANCIENT_MAGICKS, "Ghorrock", 96, new WorldPoint(2977, 3872, 0), "ghorrock_teleport_icon.png"),
 	MOONCLAN(TeleportType.LUNAR_MAGIC, "Moonclan", 69, new WorldPoint(2113, 3915, 0), "moonclan_teleport_icon.png"),
@@ -140,11 +140,18 @@ enum TeleportLocationData
 	PHARAOHS_SCEPTRE_JALSAVRAH(TeleportType.OTHER, "Pharaoh's Sceptre", "Jalsavrah (Pyramid Plunder)", new WorldPoint(3288, 2795, 0), "pharaohs_sceptre_teleport_icon.png"),
 	PHARAOHS_SCEPTRE_JALEUSTROPHOS(TeleportType.OTHER, "Pharaoh's Sceptre", "Jaleustrophos (Agility Pyramid)", new WorldPoint(3341, 2827, 0), "pharaohs_sceptre_teleport_icon.png"),
 	PHARAOHS_SCEPTRE_JALDRAOCHT(TeleportType.OTHER, "Pharaoh's Sceptre", "Jaldraocht (Desert Treasure Pyramid)", new WorldPoint(3232, 2897, 0), "pharaohs_sceptre_teleport_icon.png"),
+	PHARAOHS_SCEPTRE_JALTEVAS(TeleportType.OTHER, "Pharaoh's Sceptre", "Jaltevas (Necropolis Obelisk)", new WorldPoint(3313, 2720, 0), "pharaohs_sceptre_teleport_icon.png"),
 	CAMULET_TEMPLE(TeleportType.OTHER, "Camulet", "Enakhra's Temple", new WorldPoint(3190, 2923, 0), "camulet_teleport_icon.png"),
 	TELEPORT_CRYSTAL_LLETYA(TeleportType.OTHER, "Teleport crystal", "Lletya", new WorldPoint(2330, 3172, 0), "teleport_crystal_icon.png"),
 	TELEPORT_CRYSTAL_PRIFDDINAS(TeleportType.OTHER, "Teleport crystal", "Prifddinas", new WorldPoint(3264, 6065, 0), "teleport_crystal_icon.png"),
 	DRAKANS_MEDALLION_VER_SINHAZA(TeleportType.OTHER, "Drakan's medallion", "Ver Sinhaza", new WorldPoint(3649, 3230, 0), "drakans_medallion_teleport_icon.png"),
 	DRAKANS_MEDALLION_DARKMEYER(TeleportType.OTHER, "Drakan's medallion", "Darkmeyer", new WorldPoint(3592, 3337, 0), "drakans_medallion_teleport_icon.png"),
+	RING_OF_THE_ELEMENTS_AIR(TeleportType.OTHER, "Ring of the elements", "Air Altar", new WorldPoint(2981, 3276, 0), "ring_of_the_elements_teleport_icon.png"),
+	RING_OF_THE_ELEMENTS_WATER(TeleportType.OTHER, "Ring of the elements", "Water Altar", new WorldPoint(3166, 3158, 0), "ring_of_the_elements_teleport_icon.png"),
+	RING_OF_THE_ELEMENTS_EARTH(TeleportType.OTHER, "Ring of the elements", "Earth Altar", new WorldPoint(3288, 3468, 0), "ring_of_the_elements_teleport_icon.png"),
+	RING_OF_THE_ELEMENTS_FIRE(TeleportType.OTHER, "Ring of the elements", "Fire Altar", new WorldPoint(3315, 3278, 0), "ring_of_the_elements_teleport_icon.png"),
+	RING_OF_SHADOWS_LASSAR_UNDERCITY(TeleportType.OTHER, "Ring of shadows", "Lassar Undercity", new WorldPoint(2588, 6435, 0), "ring_of_shadows_teleport_icon.png"),
+	RING_OF_SHADOWS_THE_STRANGLEWOOD(TeleportType.OTHER, "Ring of shadows", "The Stranglewood", new WorldPoint(1175, 3422, 0), "ring_of_shadows_teleport_icon.png"),
 
 	// Wilderness
 	OBELISK_13(TeleportType.OTHER, "Obelisk", "13", new WorldPoint(3156, 3620, 0), "obelisk_icon.png"),
@@ -155,8 +162,8 @@ enum TeleportLocationData
 	OBELISK_50(TeleportType.OTHER, "Obelisk", "50", new WorldPoint(3307, 3916, 0), "obelisk_icon.png"),
 	WILDERNESS_CRABS_TELEPORT(TeleportType.OTHER, "Wilderness crabs teleport", new WorldPoint(3348, 3783, 0), "wilderness_crabs_teleport_icon.png"),
 	CANOE_WILDERNESS(TeleportType.OTHER, "Canoe (No departure)", "35", new WorldPoint(3141, 3796, 0), "transportation_icon.png"),
-	
-	// Achievement Diary
+
+	// Achievement Diary and Combat Achievements
 	ARDOUGNE_CLOAK_MONASTERY(TeleportType.OTHER, "Ardougne Cloak", "Monastery", new WorldPoint(2606, 3222, 0), "ardougne_cloak_icon.png"),
 	ARDOUGNE_CLOAK_FARM(TeleportType.OTHER, "Ardougne Cloak", "Farm", new WorldPoint(2673, 3375, 0), "ardougne_cloak_icon.png"),
 	EXPLORERS_RING(TeleportType.OTHER, "Explorer's Ring", new WorldPoint(3052, 3292, 0), "explorers_ring_icon.png"),
@@ -172,6 +179,8 @@ enum TeleportLocationData
 	WESTERN_BANNER(TeleportType.OTHER, "Western Banner", new WorldPoint(2329, 3685, 0), "western_banner_icon.png"),
 	RADAS_BLESSING_MOUNT_KARUULM(TeleportType.OTHER, "Rada's Blessing", new WorldPoint(1311, 3795, 0), "radas_blessing_icon.png"),
 	RADAS_BLESSING_WOODLANG(TeleportType.OTHER, "Rada's Blessing", new WorldPoint(1553, 3454, 0), "radas_blessing_icon.png"),
+	GHOMMALS_HILT_GWD(TeleportType.OTHER, "Ghommal's Hilt", "God Wars Dungeon", new WorldPoint(2898, 3709, 0), "ghommals_hilt_teleport_icon.png"),
+	GHOMMALS_HILT_MORULREK(TeleportType.OTHER, "Ghommal's Hilt", "Mor Ul Rek", new WorldPoint(2554, 5130, 0), "ghommals_hilt_teleport_icon.png"),
 
 	// Scrolls
 	DIGSITE_SCROLL(TeleportType.SCROLL, "Digsite Teleport", new WorldPoint(3324, 3412, 0), "scroll_teleport_icon.png"),

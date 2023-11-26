@@ -37,13 +37,13 @@ public interface TimeTrackingConfig extends Config
 	String FARM_TICK_OFFSET_PRECISION = "farmTickOffsetPrecision";
 	String AUTOWEED = "autoweed";
 	String BIRD_HOUSE = "birdhouse";
-	String BOTANIST = "botanist";
 	String TIMERS = "timers";
 	String STOPWATCHES = "stopwatches";
 	String PREFER_SOONEST = "preferSoonest";
 	String NOTIFY = "notify";
 	String BIRDHOUSE_NOTIFY = "birdHouseNotification";
 	String COMPOST = "compost";
+	String PROTECTED = "protected";
 
 	@ConfigItem(
 		keyName = "timeFormatMode",

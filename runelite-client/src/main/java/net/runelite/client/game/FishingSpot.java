@@ -33,7 +33,7 @@ import static net.runelite.api.NpcID.*;
 @Getter
 public enum FishingSpot
 {
-	SHRIMP("Shrimp, Anchovies", "Anchovies", ItemID.RAW_SHRIMPS,
+	SHRIMP("Shrimp, Anchovies, Sardine, Herring", "Anchovies", ItemID.RAW_SHRIMPS,
 		FISHING_SPOT_1514, FISHING_SPOT_1517, FISHING_SPOT_1518,
 		FISHING_SPOT_1521, FISHING_SPOT_1523, FISHING_SPOT_1524,
 		FISHING_SPOT_1525, FISHING_SPOT_1528, FISHING_SPOT_1530,
@@ -43,6 +43,7 @@ public enum FishingSpot
 	),
 	LOBSTER("Lobster, Swordfish, Tuna", "Lobster", ItemID.RAW_LOBSTER,
 		FISHING_SPOT_1510, FISHING_SPOT_1519, FISHING_SPOT_1522,
+		FISHING_SPOT_2146, // f2p wilderness
 		FISHING_SPOT_3914, FISHING_SPOT_5820, FISHING_SPOT_7199,
 		FISHING_SPOT_7460, FISHING_SPOT_7465, FISHING_SPOT_7470,
 		FISHING_SPOT_7946, FISHING_SPOT_9173, FISHING_SPOT_9174,
@@ -59,7 +60,7 @@ public enum FishingSpot
 	MONKFISH("Monkfish", ItemID.RAW_MONKFISH,
 		FISHING_SPOT_4316
 	),
-	SALMON("Salmon, Trout", "Salmon", ItemID.RAW_SALMON,
+	SALMON("Salmon, Trout, Pike", "Salmon", ItemID.RAW_SALMON,
 		ROD_FISHING_SPOT, ROD_FISHING_SPOT_1506, ROD_FISHING_SPOT_1507,
 		ROD_FISHING_SPOT_1508, ROD_FISHING_SPOT_1509, ROD_FISHING_SPOT_1513,
 		ROD_FISHING_SPOT_1515, ROD_FISHING_SPOT_1516, ROD_FISHING_SPOT_1526,
@@ -88,7 +89,7 @@ public enum FishingSpot
 	KARAMBWAN("Karambwan", ItemID.RAW_KARAMBWAN,
 		FISHING_SPOT_4712, FISHING_SPOT_4713
 	),
-	KARAMBWANJI("Karambwanji, Shrimp", "Karambwanji", ItemID.KARAMBWANJI,
+	KARAMBWANJI("Karambwanji, Shrimp", "Karambwanji", ItemID.RAW_KARAMBWANJI,
 		FISHING_SPOT_4710
 	),
 	SACRED_EEL("Sacred eel", ItemID.SACRED_EEL,
@@ -105,6 +106,12 @@ public enum FishingSpot
 	),
 	COMMON_TENCH("Common tench, Bluegill, Greater siren, Mottled eel", "Greater siren", ItemID.COMMON_TENCH,
 		FISHING_SPOT_8523
+	),
+	CAMDOZAAL_TETRA("Guppy, Cavefish, Tetra, Catfish, Barronite shards, Barronite handle", "Tetra", ItemID.TETRA,
+		FISHING_SPOT_10686
+	),
+	CAMDOZAAL_CAVE_EEL("Slimy eel, Cave eel", "Cave eel", ItemID.CAVE_EEL,
+		FISHING_SPOT_10653
 	),
 	TUTORIAL_SHRIMP("Shrimp", ItemID.RAW_SHRIMPS,
 		FISHING_SPOT_3317

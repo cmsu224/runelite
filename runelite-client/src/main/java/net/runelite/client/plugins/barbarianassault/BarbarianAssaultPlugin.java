@@ -36,9 +36,9 @@ import net.runelite.api.Varbits;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.events.WidgetLoaded;
+import net.runelite.api.widgets.ComponentID;
+import net.runelite.api.widgets.InterfaceID;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetID;
-import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.chat.ChatColorType;
 import net.runelite.client.chat.ChatMessageBuilder;
 import net.runelite.client.chat.ChatMessageManager;
@@ -63,7 +63,6 @@ public class BarbarianAssaultPlugin extends Plugin
 
 	@Getter(AccessLevel.PACKAGE)
 	private Image clockImage;
-	private int inGameBit = 0;
 	private String currentWave = START_WAVE;
 	private GameTimer gameTime;
 
@@ -110,7 +109,6 @@ public class BarbarianAssaultPlugin extends Plugin
 		overlayManager.remove(healerOverlay);
 		gameTime = null;
 		currentWave = START_WAVE;
-		inGameBit = 0;
 		clockImage = null;
 	}
 
@@ -119,9 +117,9 @@ public class BarbarianAssaultPlugin extends Plugin
 	{
 		switch (event.getGroupId())
 		{
-			case WidgetID.BA_REWARD_GROUP_ID:
+			case InterfaceID.BA_REWARD:
 			{
-				Widget rewardWidget = client.getWidget(WidgetInfo.BA_REWARD_TEXT);
+				Widget rewardWidget = client.getWidget(ComponentID.BA_REWARD_REWARD_TEXT);
 
 				if (config.waveTimes() && rewardWidget != null && rewardWidget.getText().contains(ENDGAME_REWARD_NEEDLE_TEXT) && gameTime != null)
 				{
@@ -131,25 +129,42 @@ public class BarbarianAssaultPlugin extends Plugin
 
 				break;
 			}
-			case WidgetID.BA_ATTACKER_GROUP_ID:
+			case InterfaceID.BA_ATTACKER:
 			{
 				setRound(Role.ATTACKER);
 				break;
 			}
-			case WidgetID.BA_DEFENDER_GROUP_ID:
+			case InterfaceID.BA_DEFENDER:
 			{
 				setRound(Role.DEFENDER);
 				break;
 			}
-			case WidgetID.BA_HEALER_GROUP_ID:
+			case InterfaceID.BA_HEALER:
 			{
 				setRound(Role.HEALER);
 				break;
 			}
-			case WidgetID.BA_COLLECTOR_GROUP_ID:
+			case InterfaceID.BA_COLLECTOR:
 			{
 				setRound(Role.COLLECTOR);
 				break;
+			}
+		}
+	}
+
+	@Subscribe
+	public void onVarbitChanged(VarbitChanged event)
+	{
+		if (event.getVarbitId() == Varbits.IN_GAME_BA && event.getValue() == 0)
+		{
+			currentRound = null;
+
+			// Use an instance check to determine if this is exiting a game or a tutorial
+			// After exiting tutorials there is a small delay before changing IN_GAME_BA back to
+			// 0 whereas when in a real wave it changes while still in the instance.
+			if (config.waveTimes() && gameTime != null && client.isInInstancedRegion())
+			{
+				announceTime("Wave " + currentWave + " duration: ", gameTime.getTime(true));
 			}
 		}
 	}
@@ -171,30 +186,6 @@ public class BarbarianAssaultPlugin extends Plugin
 			{
 				gameTime.setWaveStartTime();
 			}
-		}
-	}
-
-	@Subscribe
-	public void onVarbitChanged(VarbitChanged event)
-	{
-		int inGame = client.getVarbitValue(Varbits.IN_GAME_BA);
-
-		if (inGameBit != inGame)
-		{
-			if (inGameBit == 1)
-			{
-				currentRound = null;
-
-				// Use an instance check to determine if this is exiting a game or a tutorial
-				// After exiting tutorials there is a small delay before changing IN_GAME_BA back to
-				// 0 whereas when in a real wave it changes while still in the instance.
-				if (config.waveTimes() && gameTime != null && client.isInInstancedRegion())
-				{
-					announceTime("Wave " + currentWave + " duration: ", gameTime.getTime(true));
-				}
-			}
-
-			inGameBit = inGame;
 		}
 	}
 

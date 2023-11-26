@@ -64,7 +64,9 @@ import net.runelite.api.events.GameTick;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.events.WorldListLoad;
-import net.runelite.api.widgets.WidgetInfo;
+import net.runelite.api.widgets.ComponentID;
+import net.runelite.api.widgets.InterfaceID;
+import net.runelite.api.widgets.WidgetUtil;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.chat.ChatColorType;
 import net.runelite.client.chat.ChatMessageBuilder;
@@ -211,6 +213,7 @@ public class WorldHopperPlugin extends Plugin
 
 		panel.setSubscriptionFilterMode(config.subscriptionFilter());
 		panel.setRegionFilterMode(config.regionFilter());
+		panel.setWorldTypeFilters(config.worldTypeFilter());
 
 		// The plugin has its own executor for pings, as it blocks for a long time
 		hopperExecutorService = new ExecutorServiceExceptionLogger(Executors.newSingleThreadScheduledExecutor());
@@ -278,6 +281,10 @@ public class WorldHopperPlugin extends Plugin
 					break;
 				case "regionFilter":
 					panel.setRegionFilterMode(config.regionFilter());
+					updateList();
+					break;
+				case "worldTypeFilter":
+					panel.setWorldTypeFilters(config.worldTypeFilter());
 					updateList();
 					break;
 			}
@@ -362,14 +369,11 @@ public class WorldHopperPlugin extends Plugin
 	@Subscribe
 	public void onVarbitChanged(VarbitChanged varbitChanged)
 	{
-		int old1 = favoriteWorld1;
-		int old2 = favoriteWorld2;
-
-		favoriteWorld1 = client.getVarbitValue(Varbits.WORLDHOPPER_FAVROITE_1);
-		favoriteWorld2 = client.getVarbitValue(Varbits.WORLDHOPPER_FAVROITE_2);
-
-		if (old1 != favoriteWorld1 || old2 != favoriteWorld2)
+		if (varbitChanged.getVarbitId() == Varbits.WORLDHOPPER_FAVROITE_1
+			|| varbitChanged.getVarbitId() == Varbits.WORLDHOPPER_FAVROITE_2)
 		{
+			favoriteWorld1 = client.getVarbitValue(Varbits.WORLDHOPPER_FAVROITE_1);
+			favoriteWorld2 = client.getVarbitValue(Varbits.WORLDHOPPER_FAVROITE_2);
 			SwingUtilities.invokeLater(panel::updateList);
 		}
 	}
@@ -383,11 +387,11 @@ public class WorldHopperPlugin extends Plugin
 		}
 
 		final int componentId = event.getActionParam1();
-		int groupId = WidgetInfo.TO_GROUP(componentId);
+		int groupId = WidgetUtil.componentToInterface(componentId);
 		String option = event.getOption();
 
-		if (groupId == WidgetInfo.FRIENDS_LIST.getGroupId() || groupId == WidgetInfo.FRIENDS_CHAT.getGroupId()
-			|| componentId == WidgetInfo.CLAN_MEMBER_LIST.getId() || componentId == WidgetInfo.CLAN_GUEST_MEMBER_LIST.getId())
+		if (groupId == InterfaceID.FRIEND_LIST || groupId == InterfaceID.FRIENDS_CHAT
+			|| componentId == ComponentID.CLAN_MEMBERS || componentId == ComponentID.CLAN_GUEST_MEMBERS)
 		{
 			boolean after;
 
@@ -536,7 +540,7 @@ public class WorldHopperPlugin extends Plugin
 		int worldIdx = worlds.indexOf(currentWorld);
 		int totalLevel = client.getTotalLevel();
 
-		final Set<RegionFilterMode> regionFilter = config.quickHopRegionFilter();
+		final Set<RegionFilterMode> regionFilter = config.regionFilter();
 
 		World world;
 		do
@@ -600,6 +604,12 @@ public class WorldHopperPlugin extends Plugin
 			// Avoid switching to near-max population worlds, as it will refuse to allow the hop if the world is full
 			if (world.getPlayers() >= MAX_PLAYER_COUNT)
 			{
+				continue;
+			}
+
+			if (world.getPlayers() < 0)
+			{
+				// offline world
 				continue;
 			}
 
@@ -697,7 +707,7 @@ public class WorldHopperPlugin extends Plugin
 			return;
 		}
 
-		if (client.getWidget(WidgetInfo.WORLD_SWITCHER_LIST) == null)
+		if (client.getWidget(ComponentID.WORLD_SWITCHER_WORLD_LIST) == null)
 		{
 			client.openWorldHopper();
 
@@ -851,7 +861,11 @@ public class WorldHopperPlugin extends Plugin
 
 		int ping = ping(world);
 		log.trace("Ping for world {} is: {}", world.getId(), ping);
-		SwingUtilities.invokeLater(() -> panel.updatePing(world.getId(), ping));
+
+		if (panel.isActive())
+		{
+			SwingUtilities.invokeLater(() -> panel.updatePing(world.getId(), ping));
+		}
 	}
 
 	/**
@@ -873,10 +887,20 @@ public class WorldHopperPlugin extends Plugin
 			return;
 		}
 
-		currentPing = ping(currentWorld);
+		int ping = ping(currentWorld);
 		log.trace("Ping for current world is: {}", currentPing);
 
-		SwingUtilities.invokeLater(() -> panel.updatePing(currentWorld.getId(), currentPing));
+		if (ping < 0)
+		{
+			return;
+		}
+
+		currentPing = ping;
+
+		if (panel.isActive())
+		{
+			SwingUtilities.invokeLater(() -> panel.updatePing(currentWorld.getId(), currentPing));
+		}
 	}
 
 	Integer getStoredPing(World world)
